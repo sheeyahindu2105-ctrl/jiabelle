@@ -1,0 +1,191 @@
+/* ===== PRODUCT TABLE ===== */
+
+.product-table-card{
+max-width:1200px;
+margin:40px auto;
+background:white;
+padding:25px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+overflow-x:auto;
+}
+
+.product-table{
+width:100%;
+border-collapse:collapse;
+}
+
+.product-table th{
+background:#f3f4f6;
+padding:12px;
+font-size:14px;
+text-align:left;
+color:#374151;
+}
+
+.product-table td{
+padding:12px;
+border-bottom:1px solid #e5e7eb;
+font-size:14px;
+}
+
+.product-table tr:hover{
+background:#fafafa;
+}
+
+
+/* ===== PRODUCT IMAGE ===== */
+
+.table-img{
+width:55px;
+height:55px;
+object-fit:cover;
+border-radius:8px;
+border:1px solid #eee;
+}
+
+
+/* ===== PRODUCT STOCK STATUS ===== */
+
+.status-good{
+color:#16a34a;
+font-weight:600;
+}
+
+.status-low{
+color:#f59e0b;
+font-weight:600;
+}
+
+.status-out{
+color:#dc2626;
+font-weight:600;
+}
+
+
+/* ===== ACTION BUTTONS ===== */
+
+.action-col{
+display:flex;
+gap:6px;
+}
+
+.action-col button{
+padding:7px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:13px;
+font-weight:500;
+transition:0.2s;
+}
+
+
+/* EDIT BUTTON */
+
+.action-col button:first-child{
+background:#3b82f6;
+color:white;
+}
+
+.action-col button:first-child:hover{
+background:#2563eb;
+}
+
+
+/* DELETE BUTTON */
+
+.action-col .danger{
+background:#ef4444;
+color:white;
+}
+
+.action-col .danger:hover{
+background:#dc2626;
+}
+/* ===== PRODUCTS TOP BAR ===== */
+
+.products-topbar{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:25px;
+flex-wrap:wrap;
+gap:15px;
+}
+
+
+/* ===== SEARCH ===== */
+
+.product-search{
+padding:12px 15px;
+border-radius:10px;
+border:1px solid #6366f1;
+font-size:14px;
+width:280px;
+outline:none;
+}
+
+
+/* ===== FILTER DROPDOWNS ===== */
+
+.product-filter{
+padding:10px 12px;
+border-radius:8px;
+border:1px solid #d1d5db;
+font-size:14px;
+background:white;
+cursor:pointer;
+transition:0.2s;
+}
+
+.product-filter:hover{
+border-color:#6366f1;
+}
+/* ===== ADD PRODUCT BUTTON ===== */
+
+.add-product-btn{
+background:linear-gradient(135deg,#6366f1,#4f46e5);
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+.add-product-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 6px 14px rgba(0,0,0,0.15);
+}
+.products-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.products-topbar{
+display:flex;
+gap:20px;
+align-items:center;
+margin-bottom:25px;
+flex-wrap:wrap;
+}
+
+.product-search{
+padding:12px 15px;
+border-radius:10px;
+border:1px solid #6366f1;
+font-size:14px;
+width:280px;
+}
+
+.product-filter{
+padding:10px 12px;
+border-radius:8px;
+border:1px solid #d1d5db;
+font-size:14px;
+background:white;
+}

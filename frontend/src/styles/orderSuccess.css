@@ -1,0 +1,56 @@
+.success-page {
+  min-height: 100vh;
+  background: #f6f6f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.success-card {
+  background: white;
+  padding: 50px 60px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.success-card h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.success-card p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.success-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.success-btn {
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.success-btn.primary {
+  background: black;
+  color: white;
+}
+
+.success-btn:hover {
+  transform: translateY(-2px);
+}

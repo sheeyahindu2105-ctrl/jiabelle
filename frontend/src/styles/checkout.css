@@ -1,0 +1,156 @@
+.checkout-page{
+  max-width:1100px;
+  margin:30px auto;
+  font-family:system-ui;
+}
+
+.steps{
+  display:flex;
+  gap:30px;
+  margin-bottom:20px;
+}
+
+.step{
+  opacity:0.4;
+  font-weight:600;
+}
+
+.step.active{
+  opacity:1;
+  color:#e63946;
+  border-bottom:3px solid #e63946;
+}
+
+.checkout-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:25px;
+}
+
+.card,.summary{
+  background:white;
+  padding:25px;
+  border-radius:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
+
+.address-grid input{
+  width:100%;
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+.pay-card{
+  display:flex;
+  gap:12px;
+  padding:14px;
+  border-radius:10px;
+  border:2px solid #eee;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+.pay-card.active{
+  border-color:#e63946;
+  background:#fff5f6;
+}
+
+.btn-row{
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+}
+
+.next-btn{
+  background:#e63946;
+  color:white;
+  padding:12px 24px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.back-btn{
+  padding:12px 20px;
+  border-radius:10px;
+  border:2px solid #e63946;
+  background:#fff0f1;
+  color:#e63946;
+  cursor:pointer;
+}
+
+.review-box{
+  background:#fafafa;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+
+.review-item{
+  display:flex;
+  gap:15px;
+  margin-top:10px;
+  align-items:center;
+}
+
+.review-item img{
+  width:70px;
+  height:70px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.payment-badge{
+  background:#e63946;
+  color:white;
+  padding:5px 10px;
+  border-radius:6px;
+}
+
+.summary-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.summary-item img{
+  width:60px;
+  height:60px;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid #eee;
+}
+
+.summary-info{
+  flex:1;
+}
+
+.summary-price{
+  font-weight:600;
+  color:#e63946;
+}
+
+.summary hr{
+  margin:15px 0;
+  border:none;
+  border-top:1px solid #eee;
+}
+
+.summary .line{
+  display:flex;
+  justify-content:space-between;
+  margin:10px 0;
+}
+
+.total-line{
+  font-size:18px;
+  font-weight:bold;
+}
+
+.secure{
+  margin-top:15px;
+  color:green;
+  font-weight:600;
+}
