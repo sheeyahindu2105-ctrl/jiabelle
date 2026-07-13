@@ -4,12 +4,9 @@ import SellerSidebar from "../components/SellerSidebar";
 import "../styles/SellerProducts.css";
 import "../styles/AddProduct.css";
 
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
-
 function SellerProducts() {
-  const location = useLocation();
 
-  const token = localStorage.getItem("token");
+  const location = useLocation();
 
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -19,8 +16,10 @@ function SellerProducts() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  const [page] = useState(1);
+  const [page, setPage] = useState(1);
   const productsPerPage = 5;
+
+  const token = localStorage.getItem("token");
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -29,20 +28,18 @@ function SellerProducts() {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
-  const [images] = useState([]);
-    /* ================= URL FILTER ================= */
+  const [images, setImages] = useState([]);
+
+  /* ================= URL FILTER (🔥 IMPORTANT) ================= */
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const filter = query.get("filter");
 
-    if (filter === "low") {
-      setStockFilter("low");
-    } else if (filter === "out") {
-      setStockFilter("out");
-    } else {
-      setStockFilter("all");
-    }
+    if (filter === "low") setStockFilter("low");
+    else if (filter === "out") setStockFilter("out");
+    else setStockFilter("all");
+
   }, [location.search]);
 
   /* ================= AUTO PRICE ================= */
@@ -50,9 +47,7 @@ function SellerProducts() {
   useEffect(() => {
     if (originalPrice && discount >= 0) {
       const sell =
-        Number(originalPrice) -
-        (Number(originalPrice) * Number(discount)) / 100;
-
+        originalPrice - (originalPrice * discount) / 100;
       setPrice(Math.round(sell));
     }
   }, [originalPrice, discount]);
@@ -60,23 +55,12 @@ function SellerProducts() {
   /* ================= FETCH PRODUCTS ================= */
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(`${API}/api/products/my-products`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        setProducts(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchProducts();
+    fetch("http://localhost:5000/api/products/my-products", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setProducts(Array.isArray(data) ? data : []))
+      .catch(err => console.log(err));
   }, [token]);
 
   /* ================= EDIT ================= */
@@ -93,29 +77,33 @@ function SellerProducts() {
     setStock(product.stock);
     setCategory(product.category);
   };
-    /* ================= FILTER ================= */
+
+  /* ================= FILTER ================= */
 
   const filteredProducts = products
-    .filter((p) =>
-      p.name?.toLowerCase().includes(search.toLowerCase())
+
+    .filter(p =>
+      p.name.toLowerCase().includes(search.toLowerCase())
     )
-    .filter((p) => {
-      if (categoryFilter !== "all" && p.category !== categoryFilter) {
-        return false;
-      }
 
-      if (stockFilter === "low" && !(p.stock > 0 && p.stock <= 5)) {
+    .filter(p => {
+      if (categoryFilter !== "all" && p.category !== categoryFilter)
         return false;
-      }
 
-      if (stockFilter === "out" && p.stock !== 0) {
+      if (stockFilter === "low" && !(p.stock > 0 && p.stock <= 5))
         return false;
-      }
+
+      if (stockFilter === "out" && p.stock !== 0)
+        return false;
 
       return true;
     });
 
   /* ================= PAGINATION ================= */
+
+  const totalPages = Math.ceil(
+    filteredProducts.length / productsPerPage
+  );
 
   const start = (page - 1) * productsPerPage;
 
@@ -129,27 +117,51 @@ function SellerProducts() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this product?")) return;
 
-    try {
-      await fetch(`${API}/api/products/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    await fetch(`http://localhost:5000/api/products/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-      setProducts((prev) => prev.filter((p) => p._id !== id));
-    } catch (err) {
-      console.log(err);
-    }
+    setProducts(products.filter(p => p._id !== id));
   };
-    /* ================= SUBMIT ================= */
 
+  /* ================= SUBMIT ================= */
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("price", price);
+    formData.append("originalPrice", originalPrice);
+    formData.append("discount", discount);
+    formData.append("stock", stock);
+    formData.append("category", category);
+
+    images.forEach(img => formData.append("images", img));
+
+    const url = editingId
+      ? `http://localhost:5000/api/products/${editingId}`
+      : "http://localhost:5000/api/products";
+
+    const method = editingId ? "PUT" : "POST";
+
+    await fetch(url, {
+      method,
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    });
+
+    window.location.reload();
+  };
 
   /* ================= UI ================= */
 
   return (
     <div className="admin-layout">
+
       <SellerSidebar />
 
       <div className="admin">
@@ -166,7 +178,9 @@ function SellerProducts() {
             </button>
           </div>
 
+          {/* FILTER BAR */}
           <div className="products-topbar">
+
             <input
               type="text"
               placeholder="Search products..."
@@ -195,9 +209,12 @@ function SellerProducts() {
               <option value="low">Low Stock</option>
               <option value="out">Out of Stock</option>
             </select>
+
           </div>
 
+          {/* TABLE */}
           <table className="product-table">
+
             <thead>
               <tr>
                 <th>Image</th>
@@ -210,7 +227,7 @@ function SellerProducts() {
             </thead>
 
             <tbody>
-              {paginatedProducts.map((p) => (
+              {paginatedProducts.map(p => (
                 <tr key={p._id}>
                   <td>
                     {p.images?.[0] && (
@@ -218,49 +235,41 @@ function SellerProducts() {
                         src={
                           p.images[0].startsWith("http")
                             ? p.images[0]
-                            : `${API}${p.images[0]}`
+                            : `http://localhost:5000${p.images[0]}`
                         }
-                        alt={p.name}
                         className="table-img"
+                        alt=""
                       />
                     )}
                   </td>
 
                   <td>{p.name}</td>
-
                   <td>₹{p.price}</td>
 
-                  <td
-                    style={{
-                      color:
-                        p.stock === 0
-                          ? "red"
-                          : p.stock <= 5
-                          ? "orange"
-                          : "green",
-                    }}
-                  >
+                  <td style={{
+                    color:
+                      p.stock === 0 ? "red" :
+                      p.stock <= 5 ? "orange" :
+                      "green"
+                  }}>
                     {p.stock}
                   </td>
 
                   <td>{p.category}</td>
 
                   <td>
-                    <button onClick={() => handleEdit(p)}>
-                      Edit
-                    </button>
-
-                    <button onClick={() => handleDelete(p._id)}>
-                      Delete
-                    </button>
+                    <button onClick={() => handleEdit(p)}>Edit</button>
+                    <button onClick={() => handleDelete(p._id)}>Delete</button>
                   </td>
                 </tr>
               ))}
             </tbody>
+
           </table>
 
         </div>
       </div>
+
     </div>
   );
 }
