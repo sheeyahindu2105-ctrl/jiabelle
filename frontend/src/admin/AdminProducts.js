@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "../styles/admin.css";
-import Pagination from "../components/Pagination";
 
 function AdminProducts() {
 
@@ -9,219 +8,80 @@ function AdminProducts() {
 
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-
   const [activeTab, setActiveTab] = useState("pending");
-
-  const [page, setPage] = useState(1);
-  const perPage = 6;
+  const [loading, setLoading] = useState(true);
 
   /* ================= FETCH PRODUCTS ================= */
 
   useEffect(() => {
 
     const fetchProducts = async () => {
-
       try {
+        setLoading(true);
 
-        const res = await fetch(`${API}/api/products/admin/products`, {
+        // ✅ FIXED API
+        const res = await fetch(`${API}/api/admin/products`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
 
+        if (!res.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
         const data = await res.json();
 
-        const list = Array.isArray(data) ? data : data.products || [];
+        const list = Array.isArray(data)
+          ? data
+          : data.products || [];
 
         setProducts(list);
 
       } catch (err) {
-        console.error(err);
+        console.error("❌ Error:", err);
       } finally {
         setLoading(false);
       }
-
     };
 
     fetchProducts();
 
   }, [API, token]);
 
-
-
-  /* ================= RESET PAGE WHEN TAB CHANGES ================= */
-
-  useEffect(() => {
-    setPage(1);
-  }, [activeTab]);
-
-
-
-  /* ================= APPROVE PRODUCT ================= */
-
-  const approveProduct = async (id) => {
-
-    await fetch(`${API}/api/products/${id}/approve`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    setProducts(prev =>
-      prev.map(p =>
-        p._id === id ? { ...p, status: "approved" } : p
-      )
-    );
-  };
-
-
-
-  /* ================= REJECT PRODUCT ================= */
-
-  const rejectProduct = async (id) => {
-
-    await fetch(`${API}/api/products/${id}/reject`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    setProducts(prev =>
-      prev.map(p =>
-        p._id === id ? { ...p, status: "rejected" } : p
-      )
-    );
-  };
-
-
-
-  /* ================= BLOCK PRODUCT ================= */
-
-  const blockProduct = async (id) => {
-
-    await fetch(`${API}/api/products/${id}/block`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    setProducts(prev =>
-      prev.map(p =>
-        p._id === id ? { ...p, status: "blocked" } : p
-      )
-    );
-  };
-
-
-
-  /* ================= UNBLOCK PRODUCT ================= */
-
-  const unblockProduct = async (id) => {
-
-    await fetch(`${API}/api/products/${id}/unblock`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    setProducts(prev =>
-      prev.map(p =>
-        p._id === id ? { ...p, status: "approved" } : p
-      )
-    );
-  };
-
-
-
-  /* ================= DELETE PRODUCT ================= */
-
-  const deleteProduct = async (id) => {
-
-    if (!window.confirm("Delete this product?")) return;
-
-    await fetch(`${API}/api/products/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    setProducts(prev => prev.filter(p => p._id !== id));
-  };
-
-
-
-  /* ================= FILTER PRODUCTS ================= */
+  /* ================= FILTER ================= */
 
   const filteredProducts = products.filter(p =>
     p.status === activeTab &&
     (
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.seller?.email?.toLowerCase().includes(search.toLowerCase())
+      p.name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.seller?.name?.toLowerCase().includes(search.toLowerCase())
     )
   );
 
-
-
-  /* ================= PAGINATION ================= */
-
-  const totalPages = Math.ceil(filteredProducts.length / perPage);
-
-  const start = (page - 1) * perPage;
-
-  const paginatedProducts = filteredProducts.slice(start, start + perPage);
-
-
-
-  /* ================= LOADING ================= */
-
-  if (loading) {
-    return <p className="empty">Loading products...</p>;
-  }
-
-
-
-  /* ================= RENDER ================= */
+  /* ================= UI ================= */
 
   return (
-
     <div className="admin-page">
 
       <h2>Products</h2>
 
       {/* ================= TABS ================= */}
-
       <div className="tab-bar">
 
-        <button
-          className={`tab-btn ${activeTab === "pending" ? "active" : ""}`}
-          onClick={() => setActiveTab("pending")}
-        >
-          PENDING
-        </button>
-
-        <button
-          className={`tab-btn ${activeTab === "approved" ? "active" : ""}`}
-          onClick={() => setActiveTab("approved")}
-        >
-          APPROVED
-        </button>
-
-        <button
-          className={`tab-btn ${activeTab === "blocked" ? "active" : ""}`}
-          onClick={() => setActiveTab("blocked")}
-        >
-          BLOCKED
-        </button>
-
-        <button
-          className={`tab-btn ${activeTab === "rejected" ? "active" : ""}`}
-          onClick={() => setActiveTab("rejected")}
-        >
-          REJECTED
-        </button>
+        {["pending", "approved", "blocked", "rejected"].map(tab => (
+          <button
+            key={tab}
+            className={`tab-btn ${activeTab === tab ? "active" : ""}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.toUpperCase()}
+          </button>
+        ))}
 
       </div>
 
-
-
       {/* ================= SEARCH ================= */}
-
       <input
         className="admin-search"
         placeholder="Search product name or seller..."
@@ -229,10 +89,7 @@ function AdminProducts() {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-
-
       {/* ================= TABLE ================= */}
-
       <div className="table-wrapper">
 
         <table className="admin-product-table">
@@ -250,104 +107,86 @@ function AdminProducts() {
 
           <tbody>
 
-            {paginatedProducts.map(product => (
-
-              <tr key={product._id}>
-
-                {/* ================= IMAGE ================= */}
-
-                <td>
-
-                  <img
-                    src={
-                      product.images?.[0]?.startsWith("http")
-                        ? product.images[0]
-                        : `${API}/${product.images?.[0]}`
-                    }
-                    alt={product.name}
-                    className="admin-product-img"
-                  />
-
+            {loading ? (
+              <tr>
+                <td colSpan="6" className="empty">
+                  Loading...
                 </td>
-
-
-
-                <td>{product.name}</td>
-
-                <td>{product.seller?.name}</td>
-
-                <td>₹{product.price}</td>
-
-
-
-                {/* ================= STATUS ================= */}
-
-                <td>
-
-                  <span className={`status ${product.status}`}>
-                    {product.status}
-                  </span>
-
+              </tr>
+            ) : filteredProducts.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="empty">
+                  No products found
                 </td>
+              </tr>
+            ) : (
+              filteredProducts.map(product => (
+                <tr key={product._id}>
 
+                  {/* IMAGE */}
+                  <td>
+                    <img
+                      src={
+                        product.images?.[0]?.startsWith("http")
+                          ? product.images[0]
+                          : `${API}/${product.images?.[0]}`
+                      }
+                      alt={product.name}
+                      className="admin-product-img"
+                    />
+                  </td>
 
+                  {/* NAME */}
+                  <td>{product.name}</td>
 
-                {/* ================= ACTION ================= */}
+                  {/* SELLER */}
+                  <td>{product.seller?.name || "N/A"}</td>
 
-                <td>
+                  {/* PRICE */}
+                  <td>₹{product.price}</td>
 
-                  <div className="action-buttons">
+                  {/* STATUS */}
+                  <td>
+                    <span className={`status ${product.status}`}>
+                      {product.status}
+                    </span>
+                  </td>
+
+                  {/* ACTION */}
+                  <td>
 
                     {product.status === "pending" && (
                       <>
-                        <button
-                          className="approve-btn"
-                          onClick={() => approveProduct(product._id)}
-                        >
+                        <button className="approve-btn">
                           Approve
                         </button>
-
-                        <button
-                          className="reject-btn"
-                          onClick={() => rejectProduct(product._id)}
-                        >
+                        <button className="reject-btn">
                           Reject
                         </button>
                       </>
                     )}
 
                     {product.status === "approved" && (
-                      <button
-                        className="block-btn"
-                        onClick={() => blockProduct(product._id)}
-                      >
+                      <button className="block-btn">
                         Block
                       </button>
                     )}
 
                     {product.status === "blocked" && (
-                      <button
-                        className="unblock-btn"
-                        onClick={() => unblockProduct(product._id)}
-                      >
+                      <button className="unblock-btn">
                         Unblock
                       </button>
                     )}
 
-                    <button
-                      className="delete-btn"
-                      onClick={() => deleteProduct(product._id)}
-                    >
+                    <button className="delete-btn">
                       Delete
                     </button>
 
-                  </div>
+                  </td>
 
-                </td>
-
-              </tr>
-
-            ))}
+                </tr>
+              ))
+            )}
 
           </tbody>
 
@@ -355,21 +194,8 @@ function AdminProducts() {
 
       </div>
 
-
-
-      {/* ================= PAGINATION ================= */}
-
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        onPrev={() => setPage(page - 1)}
-        onNext={() => setPage(page + 1)}
-      />
-
     </div>
-
   );
-
 }
 
 export default AdminProducts;

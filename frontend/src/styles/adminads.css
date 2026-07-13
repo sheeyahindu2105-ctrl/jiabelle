@@ -1,0 +1,119 @@
+
+.ads-page {
+  padding: 30px;
+  flex: 1;
+}
+
+/* HEADER */
+.ads-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.ads-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.ads-header p {
+  margin: 5px 0 0;
+  color: #777;
+}
+
+.ads-count {
+  background: #e6f9ed;
+  color: #0a8f3c;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* TABLE */
+.ads-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.ads-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ads-table th {
+  background: #f8fafc;
+  text-align: left;
+  padding: 14px;
+  font-size: 14px;
+  color: #555;
+}
+
+.ads-table td {
+  padding: 14px;
+  border-top: 1px solid #eee;
+}
+
+/* SELLER */
+.seller-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.seller-name {
+  font-weight: 600;
+}
+
+.seller-email {
+  font-size: 12px;
+  color: #777;
+}
+
+/* PLAN */
+.plan-badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.plan-badge.basic {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.plan-badge.standard {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* STATUS */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.status-badge.expired {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-badge.blocked {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* LOADING */
+.loading {
+  text-align: center;
+  margin-top: 50px;
+}

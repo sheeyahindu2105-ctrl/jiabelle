@@ -1,0 +1,136 @@
+/* ================= FOOTER ================= */
+
+.footer {
+  background: #111;
+  color: #ccc;
+  padding: 60px 80px 30px;
+  font-family: "Poppins", sans-serif;
+
+  /* ✅ KEEP THIS */
+  margin-top: auto;
+
+  /* 🔥 FIX: prevent sidebar overlap */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ================= GRID ================= */
+
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+/* ================= HEADINGS ================= */
+
+.footer-col h3 {
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.footer-col h4 {
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+/* ================= TEXT ================= */
+
+.footer-col p,
+.footer-col li,
+.footer-col a {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.footer-col li:hover,
+.footer-col a:hover {
+  color: #fff;
+}
+
+/* ================= LIST ================= */
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* ================= MIDDLE ================= */
+
+.footer-middle {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ================= TRUST ================= */
+
+.trust span {
+  margin-right: 20px;
+  font-size: 14px;
+}
+
+/* ================= SOCIAL ================= */
+
+.social {
+  display: flex;
+  align-items: center;
+}
+
+.social a {
+  margin-left: 15px;
+  color: #aaa;
+}
+
+.social a:hover {
+  color: #fff;
+}
+
+/* ================= BOTTOM ================= */
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #777;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1024px) {
+  .footer {
+    padding: 50px 40px;
+  }
+
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 40px 20px;
+  }
+
+  .footer-middle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+  }
+}

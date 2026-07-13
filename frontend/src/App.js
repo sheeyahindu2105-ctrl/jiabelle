@@ -1,6 +1,10 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-// Pages
+import Navbar from "./components/Navbar";
+import Footer from "./pages/Footer";
+
+/* ================= PAGES ================= */
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -20,8 +24,9 @@ import Notifications from "./pages/Notifications";
 import Account from "./pages/Account";
 import SellerOrders from "./pages/SellerOrders";
 import SellerAnalytics from "./pages/SellerAnalytics";
+import SearchPage from "./pages/SearchPage";
 
-// Admin
+/* ================= ADMIN ================= */
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/AdminDashboard";
 import AdminUsers from "./admin/AdminUsers";
@@ -30,238 +35,185 @@ import AdminProducts from "./admin/AdminProducts";
 import AdminOrders from "./admin/AdminOrders";
 import AdminReports from "./admin/AdminReports";
 
+/* ================= HELPER ================= */
+const getUser = () => {
+  try {
+    const stored = localStorage.getItem("user");
+    return stored && stored !== "undefined"
+      ? JSON.parse(stored)
+      : null;
+  } catch {
+    return null;
+  }
+};
+
 /* ================= PROTECTED ROUTE ================= */
 const ProtectedRoute = ({ children, allowedRoles }) => {
-const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  const user = getUser();
 
-let user = null;
-try {
-user = JSON.parse(localStorage.getItem("user"));
-} catch {
-user = null;
-}
+  if (!user || !token) return <Navigate to="/login" replace />;
 
-if (!user || !token) {
-return <Navigate to="/login" replace />;
-}
+  if (user.isBlocked) {
+    localStorage.clear();
+    alert("Your account is blocked by admin");
+    return <Navigate to="/login" replace />;
+  }
 
-if (user.isBlocked) {
-localStorage.removeItem("token");
-localStorage.removeItem("user");
-alert("Your account is blocked by admin");
-return <Navigate to="/login" replace />;
-}
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    if (user.role === "seller")
+      return <Navigate to="/seller-dashboard" replace />;
+    if (user.role === "admin")
+      return <Navigate to="/admin/dashboard" replace />;
+    return <Navigate to="/home" replace />;
+  }
 
-if (allowedRoles && !allowedRoles.includes(user.role)) {
-if (user.role === "seller") {
-return <Navigate to="/seller-dashboard" replace />;
-}
-
-```
-if (user.role === "admin") {
-  return <Navigate to="/admin/dashboard" replace />;
-}
-
-return <Navigate to="/home" replace />;
-```
-
-}
-
-return children;
+  return children;
 };
 
 function App() {
-const token = localStorage.getItem("token");
+  const location = useLocation();
 
-let user = null;
-try {
-user = JSON.parse(localStorage.getItem("user"));
-} catch {
-user = null;
-}
+  /* ================= SEARCH ================= */
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState([]);
 
-return ( <Routes>
+  const API = "http://localhost:5000";
 
-```
-  {/* DEFAULT */}
-  <Route path="/" element={<Navigate to="/home" replace />} />
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${API}/api/products`);
+        const data = await res.json();
+        setProducts(Array.isArray(data) ? data : []);
+      } catch {
+        setProducts([]);
+      }
+    };
 
-  {/* LOGIN */}
-  <Route
-    path="/login"
-    element={
-      token && user ? (
-        user.role === "admin" ? (
-          <Navigate to="/admin/dashboard" replace />
-        ) : user.role === "seller" ? (
-          <Navigate to="/seller-dashboard" replace />
-        ) : (
-          <Navigate to="/home" replace />
-        )
-      ) : (
-        <Login />
-      )
-    }
-  />
+    fetchProducts();
+  }, []);
 
-  {/* SIGNUP */}
-  <Route
-    path="/signup"
-    element={
-      token && user ? <Navigate to="/home" replace /> : <Signup />
-    }
-  />
+  /* ================= NAVBAR HIDE ================= */
+  const hideNavbarRoutes = [
+    "/login",
+    "/signup",
+    "/seller-dashboard",
+    "/seller",
+    "/admin",
+  ];
 
-  {/* PUBLIC */}
-  <Route path="/home" element={<Home />} />
-  <Route path="/category/:name" element={<CategoryPage />} />
-  <Route path="/product/:id" element={<ProductDetails />} />
-  <Route path="/order-success" element={<OrderSuccess />} />
+  const shouldHideNavbar = hideNavbarRoutes.some((path) =>
+    location.pathname.startsWith(path)
+  );
 
-  {/* PROTECTED USER */}
-  <Route
-    path="/wishlist"
-    element={
-      <ProtectedRoute allowedRoles={["user", "seller", "admin"]}>
-        <Wishlist />
-      </ProtectedRoute>
-    }
-  />
+  /* ================= FOOTER ================= */
+  const showFooterOnlyOnHome =
+    location.pathname === "/home" || location.pathname === "/";
 
-  <Route
-    path="/cart"
-    element={
-      <ProtectedRoute allowedRoles={["user", "seller", "admin"]}>
-        <Cart />
-      </ProtectedRoute>
-    }
-  />
+  return (
+    <div className="app-container">
 
-  <Route
-    path="/checkout"
-    element={
-      <ProtectedRoute allowedRoles={["user", "seller", "admin"]}>
-        <Checkout />
-      </ProtectedRoute>
-    }
-  />
+      {/* NAVBAR */}
+      {!shouldHideNavbar && (
+        <Navbar
+          search={search}
+          setSearch={setSearch}
+          products={products}
+        />
+      )}
 
-  <Route
-    path="/orders"
-    element={
-      <ProtectedRoute allowedRoles={["user", "seller", "admin"]}>
-        <Orders />
-      </ProtectedRoute>
-    }
-  />
+      {/* MAIN */}
+      <div className="main-content">
+        <Routes>
 
-  <Route
-    path="/order-details/:id"
-    element={
-      <ProtectedRoute allowedRoles={["user", "seller", "admin"]}>
-        <OrderDetails />
-      </ProtectedRoute>
-    }
-  />
+          <Route path="/" element={<Navigate to="/home" />} />
 
-  {/* PROFILE */}
-  <Route
-    path="/profile"
-    element={
-      <ProtectedRoute allowedRoles={["user", "seller", "admin"]}>
-        <Profile />
-      </ProtectedRoute>
-    }
-  />
+          {/* AUTH */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-  <Route
-    path="/notifications"
-    element={
-      <ProtectedRoute allowedRoles={["user", "seller", "admin"]}>
-        <Notifications />
-      </ProtectedRoute>
-    }
-  />
+          {/* USER */}
+          <Route path="/home" element={<Home />} />
+          <Route path="/category/:category" element={<CategoryPage />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/search/:query" element={<SearchPage />} />
 
-  <Route
-    path="/account"
-    element={
-      <ProtectedRoute allowedRoles={["user", "seller", "admin"]}>
-        <Account />
-      </ProtectedRoute>
-    }
-  />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/order-details/:id" element={<OrderDetails />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
 
-  {/* SELLER */}
-  <Route
-    path="/become-seller"
-    element={
-      <ProtectedRoute allowedRoles={["user"]}>
-        <BecomeSeller />
-      </ProtectedRoute>
-    }
-  />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/checkout" element={<Checkout />} />
 
-  <Route
-    path="/seller-dashboard"
-    element={
-      <ProtectedRoute allowedRoles={["seller", "admin"]}>
-        <SellerDashboard />
-      </ProtectedRoute>
-    }
-  />
+          {/* SELLER */}
+          <Route
+            path="/seller-dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["seller"]}>
+                <SellerDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="/seller/products"
-    element={
-      <ProtectedRoute allowedRoles={["seller", "admin"]}>
-        <SellerProducts />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="/seller/products"
+            element={
+              <ProtectedRoute allowedRoles={["seller"]}>
+                <SellerProducts />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="/seller/orders"
-    element={
-      <ProtectedRoute allowedRoles={["seller", "admin"]}>
-        <SellerOrders />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="/seller/orders"
+            element={
+              <ProtectedRoute allowedRoles={["seller"]}>
+                <SellerOrders />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="/seller/analytics"
-    element={
-      <ProtectedRoute allowedRoles={["seller", "admin"]}>
-        <SellerAnalytics />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="/seller/analytics"
+            element={
+              <ProtectedRoute allowedRoles={["seller"]}>
+                <SellerAnalytics />
+              </ProtectedRoute>
+            }
+          />
 
-  {/* ADMIN */}
-  <Route
-    path="/admin"
-    element={
-      <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminLayout />
-      </ProtectedRoute>
-    }
-  >
-    <Route path="dashboard" element={<AdminDashboard />} />
-    <Route path="users" element={<AdminUsers />} />
-    <Route path="sellers" element={<AdminSellers />} />
-    <Route path="products" element={<AdminProducts />} />
-    <Route path="orders" element={<AdminOrders />} />
-    <Route path="reports" element={<AdminReports />} />
-  </Route>
+          {/* BECOME SELLER */}
+          <Route path="/become-seller" element={<BecomeSeller />} />
 
-  {/* FALLBACK */}
-  <Route path="*" element={<Navigate to="/home" replace />} />
+          {/* ❌ REMOVED ADVERTISE */}
 
-</Routes>
+          {/* ADMIN */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="sellers" element={<AdminSellers />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="reports" element={<AdminReports />} />
+            {/* ❌ REMOVED AdminAds */}
+          </Route>
 
+          {/* FALLBACK */}
+          <Route path="*" element={<Navigate to="/home" />} />
 
-);
+        </Routes>
+      </div>
+
+      {/* FOOTER */}
+      {showFooterOnlyOnHome && <Footer />}
+
+    </div>
+  );
 }
 
 export default App;

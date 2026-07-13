@@ -12,7 +12,7 @@ import {
   blockProduct,
   addReview,
   deleteReview,
-  updateReview
+  updateReview,
 } from "../controllers/productController.js";
 
 import { protect } from "../middleware/authMiddleware.js";
@@ -24,7 +24,7 @@ const router = express.Router();
 
 /* ================= SELLER ROUTES ================= */
 
-// ADD PRODUCT
+// ➕ ADD PRODUCT
 router.post(
   "/",
   protect,
@@ -33,7 +33,7 @@ router.post(
   addProduct
 );
 
-// GET MY PRODUCTS
+// 📦 GET MY PRODUCTS
 router.get(
   "/my-products",
   protect,
@@ -41,7 +41,7 @@ router.get(
   getMyProducts
 );
 
-// UPDATE PRODUCT
+// ✏️ UPDATE PRODUCT
 router.put(
   "/:id",
   protect,
@@ -50,7 +50,7 @@ router.put(
   updateProduct
 );
 
-// DELETE PRODUCT
+// ❌ DELETE PRODUCT
 router.delete(
   "/:id",
   protect,
@@ -60,7 +60,7 @@ router.delete(
 
 /* ================= ADMIN ROUTES ================= */
 
-// APPROVE PRODUCT
+// ✅ APPROVE PRODUCT
 router.put(
   "/:id/approve",
   protect,
@@ -68,7 +68,7 @@ router.put(
   approveProduct
 );
 
-// REJECT PRODUCT
+// ❌ REJECT PRODUCT
 router.put(
   "/:id/reject",
   protect,
@@ -76,7 +76,7 @@ router.put(
   rejectProduct
 );
 
-// BLOCK PRODUCT
+// 🚫 BLOCK PRODUCT
 router.put(
   "/:id/block",
   protect,
@@ -84,57 +84,77 @@ router.put(
   blockProduct
 );
 
-// GET ALL PRODUCTS FOR ADMIN
+// 📊 GET ALL PRODUCTS (ADMIN PANEL)
 router.get(
-  "/admin/products",
+  "/admin/all",
   protect,
   isAdmin,
   async (req, res) => {
-
     try {
-
       const products = await Product.find()
         .populate("seller", "name email")
         .sort({ createdAt: -1 });
 
-      res.json(products);
-
+      res.status(200).json(products);
     } catch (error) {
-
-      console.error(error);
-
+      console.error("❌ Admin product fetch error:", error);
       res.status(500).json({
-        message: "Server error while fetching products"
+        success: false,
+        message: "Server error while fetching products",
       });
-
     }
-
   }
 );
 
 /* ================= PUBLIC ROUTES ================= */
 
-// GET APPROVED PRODUCTS (HOME PAGE)
+// 🟢 GET APPROVED PRODUCTS (HOME PAGE)
 router.get("/", getAllProducts);
+
+// 🔍 GET SINGLE PRODUCT (IMPORTANT FOR PRODUCT PAGE)
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id)
+      .populate("reviews.user", "name");
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error("❌ Get product error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
 
 /* ================= REVIEW ROUTES ================= */
 
-// ADD REVIEW
+// ⭐ ADD REVIEW
 router.post(
   "/:id/review",
   protect,
   addReview
 );
 
-// DELETE REVIEW
+// 🗑 DELETE REVIEW
 router.delete(
   "/:id/review/:reviewId",
   protect,
   deleteReview
 );
+
+// ✏️ UPDATE REVIEW
 router.put(
   "/:id/review/:reviewId",
   protect,
   updateReview
 );
+
 export default router;

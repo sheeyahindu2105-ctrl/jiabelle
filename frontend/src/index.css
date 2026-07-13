@@ -1,31 +1,174 @@
-body {
+/* ================= RESET ================= */
+
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ================= ROOT VARIABLES ================= */
+
+:root {
+  --primary: #4f46e5;
+  --primary-light: #6366f1;
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --text: #1e293b;
+  --text-light: #64748b;
+
+  --border: #e5e7eb;
+  --card: #ffffff;
+
+  --bg: #f5f6f8;
+
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ================= BASE ================= */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+
+  background: var(--bg);
+  color: var(--text);
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  display: flex;              /* ✅ IMPORTANT */
+  flex-direction: column;     /* ✅ IMPORTANT */
 }
+
+/* ================= LAYOUT ================= */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 🔥 FIXED */
+.main-content {
+  flex: 1;
+  display: flex;              /* ✅ ADD THIS */
+  flex-direction: column;     /* ✅ ADD THIS */
+  padding: 20px;
+}
+
+/* ================= CONTAINER ================= */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ================= TYPOGRAPHY ================= */
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: var(--text);
+}
+
+p {
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+/* ================= BUTTONS ================= */
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* ================= LINKS ================= */
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ================= INPUT ================= */
+
+input,
+textarea,
+select {
+  outline: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--primary);
+}
+
+/* ================= CARD ================= */
+
+.card {
+  background: var(--card);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 15px;
+}
+
+/* ================= IMAGE ================= */
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ================= SCROLLBAR ================= */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+/* ================= CODE ================= */
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-:root{
 
---primary:#4f46e5;
---primary-light:#6366f1;
+/* ================= RESPONSIVE ================= */
 
---success:#22c55e;
---warning:#f59e0b;
---danger:#ef4444;
+@media (max-width: 768px) {
+  .main-content {
+    padding: 10px;
+  }
 
---text:#1e293b;
---text-light:#64748b;
-
---border:#e5e7eb;
---card:#ffffff;
-
---shadow:0 6px 20px rgba(0,0,0,0.08);
-
+  .container {
+    padding: 10px;
+  }
 }

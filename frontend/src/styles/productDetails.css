@@ -371,3 +371,11 @@ display:none;
 .delete-btn:hover{
   background:#ffd6d6;
 }
+.share-btn {
+  background: #eee;
+  color: #333;
+}
+
+.share-btn:hover {
+  background: #ddd;
+}

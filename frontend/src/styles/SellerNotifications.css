@@ -1,0 +1,21 @@
+.notif-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.notif-box {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.notif-box.danger { background: #ef4444; }
+.notif-box.warning { background: #f59e0b; }
+.notif-box.success { background: #22c55e; }
+.notif-box.primary { background: #6366f1; }
+.notif-box.info { background: #06b6d4; }

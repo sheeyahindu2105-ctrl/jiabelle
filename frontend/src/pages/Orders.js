@@ -3,108 +3,120 @@ import { useNavigate } from "react-router-dom";
 import "../styles/orders.css";
 
 function Orders() {
-
   const [orders, setOrders] = useState([]);
-
-  const API = "http://localhost:5000";   // ✅ fixed (removed env confusion)
-  const token = localStorage.getItem("token");
-
   const navigate = useNavigate();
 
+  const API = "http://localhost:5000";
+  const token = localStorage.getItem("token");
+
+  /* ================= FETCH ORDERS ================= */
+
   useEffect(() => {
-
     const fetchOrders = async () => {
-
       try {
-
         const res = await fetch(`${API}/api/orders/my`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         const data = await res.json();
 
-        setOrders(Array.isArray(data) ? data : []);
+        if (Array.isArray(data)) {
+          setOrders(data);
+        } else {
+          setOrders([]);
+        }
 
       } catch (err) {
-        console.error("Error fetching orders", err);
-        setOrders([]);
+        console.error("Order fetch error:", err);
       }
-
     };
 
-    if (token) {
-      fetchOrders();   // ✅ only call if token exists
-    }
-
+    fetchOrders();
   }, [token]);
 
-  return (
+  /* ================= STATUS CLASS ================= */
 
+  const getStatusClass = (status) => {
+    return `order-status status-${status}`;
+  };
+
+  /* ================= UI ================= */
+
+  return (
     <div className="orders-page">
 
+      {/* BACK BUTTON */}
       <button
         className="back-home-btn"
-        onClick={() => navigate("/")}>
+        onClick={() => navigate("/home")}
+      >
         ← Back to Home
       </button>
 
       <h2 className="orders-title">My Orders</h2>
 
+      {/* EMPTY */}
+      {orders.length === 0 && (
+        <p className="empty-text">No orders found</p>
+      )}
+
+      {/* LIST */}
       <div className="orders-container">
 
-        {orders.length === 0 && (
-          <p className="empty-text">No orders found.</p>
-        )}
+        {orders.map((order) => {
 
-        {orders.map(order => {
+          const product = order.items?.[0]?.product;
 
-          const firstProduct = order.products?.[0]?.product;
+          const image = product?.images?.[0]
+            ? product.images[0].startsWith("http")
+              ? product.images[0]
+              : `${API}${product.images[0]}`
+            : "/placeholder.png";
 
           return (
+            <div key={order._id} className="order-card">
 
-            <div className="order-card" key={order._id}>
-
+              {/* LEFT */}
               <div className="order-left">
 
                 <img
-                  src={
-                    firstProduct?.images?.[0] ||
-                    firstProduct?.image ||
-                    ""
-                  }
+                  src={image}
                   alt="product"
                   className="order-product-img"
                 />
 
-                <div className="order-info">
-
-                  <h3 className="order-product-title">
-                    {firstProduct?.name || "Product"}
-                  </h3>
+                <div>
+                  <h4 className="order-product-title">
+                    {product?.name || "Product"}
+                  </h4>
 
                   <p className="order-id">
                     Order ID: #{order._id.slice(-8)}
                   </p>
 
                   <p className="order-total">
-                    Total ₹{order.totalAmount}
+                    Total: ₹{order.totalAmount}
                   </p>
 
-                  <p className={`order-status status-${order.orderStatus}`}>
-                    {order.orderStatus?.replace("_", " ")}
-                  </p>
+                  {/* STATUS */}
+                  <span className={getStatusClass(order.orderStatus)}>
+                    {order.orderStatus}
+                  </span>
 
                 </div>
 
               </div>
 
+              {/* RIGHT */}
               <div className="order-right">
 
                 <button
                   className="view-details-btn"
-                  onClick={() => navigate(`/order-details/${order._id}`)}
+                  onClick={() =>
+                    navigate(`/order-details/${order._id}`)
+                  }
                 >
                   View Details
                 </button>
@@ -112,17 +124,13 @@ function Orders() {
               </div>
 
             </div>
-
           );
-
         })}
 
       </div>
 
     </div>
-
   );
-
 }
 
 export default Orders;

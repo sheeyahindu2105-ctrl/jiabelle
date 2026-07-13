@@ -10,6 +10,7 @@ import sellerRequestRoutes from "./routes/sellerRequestRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+
 import { startOrderStatusUpdater } from "./utils/updateOrderStatus.js";
 
 import path from "path";
@@ -19,7 +20,6 @@ import { fileURLToPath } from "url";
 import http from "http";
 import { Server } from "socket.io";
 
-/* ================= SETUP ================= */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -28,49 +28,60 @@ connectDB();
 
 const app = express();
 
-/* ================= HTTP SERVER ================= */
+/* CREATE HTTP SERVER */
 const server = http.createServer(app);
 
+/* ✅ ALLOWED ORIGINS */
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+];
+
 /* ================= SOCKET.IO ================= */
+
 const io = new Server(server, {
-cors: {
-origin: process.env.CLIENT_URL || "http://localhost:3000",
-credentials: true,
-},
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+  },
 });
 
-/* SOCKET CONNECTION */
 io.on("connection", (socket) => {
-console.log("User connected:", socket.id);
+  console.log("User connected:", socket.id);
 
-socket.on("join", (userId) => {
-socket.join(userId);
-console.log(`User joined room: ${userId}`);
+  socket.on("join", (userId) => {
+    socket.join(userId);
+    console.log(`User joined room: ${userId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
 });
 
-socket.on("disconnect", () => {
-console.log("User disconnected");
-});
-});
-
-/* EXPORT SOCKET */
 export { io };
 
-/* ================= MIDDLEWARES ================= */
+/* ================= MIDDLEWARE ================= */
 
-/* ✅ CORS (IMPORTANT FOR GOOGLE LOGIN) */
 app.use(
-cors({
-origin: process.env.CLIENT_URL || "http://localhost:3000",
-credentials: true,
-})
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error("Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
 );
 
-/* ✅ FIX GOOGLE POPUP + COOP ERROR */
+/* GOOGLE AUTH FIX */
 app.use((req, res, next) => {
-res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
-next();
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
+  next();
 });
 
 /* BODY PARSER */
@@ -78,6 +89,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* ================= ROUTES ================= */
+
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/admin", adminRoutes);
@@ -86,29 +98,23 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/payment", paymentRoutes);
 
+/* ❌ REMOVED ADS ROUTE (FIXED) */
+
 /* ================= STATIC ================= */
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-/* ================= HEALTH CHECK ================= */
+/* ================= TEST ================= */
+
 app.get("/", (req, res) => {
-res.send("Backend running 🚀");
+  res.send("Backend running 🚀");
 });
 
-/* ================= ERROR HANDLER (NEW) ================= */
-app.use((err, req, res, next) => {
-console.error("Server Error:", err.message);
-res.status(500).json({
-success: false,
-message: "Internal Server Error",
-});
-});
+/* ================= SERVER ================= */
 
-/* ================= START SERVER ================= */
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
-console.log(`Server running on port ${PORT}`);
-
-/* START BACKGROUND JOB */
-startOrderStatusUpdater();
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  startOrderStatusUpdater();
 });

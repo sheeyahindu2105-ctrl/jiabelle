@@ -1,0 +1,72 @@
+/* ================= INTRO SCREEN ================= */
+
+.intro-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #7c0a14;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+
+  /* ✅ smooth fade out */
+  animation: fadeOut 2.5s ease forwards;
+}
+
+/* ================= LOGO ================= */
+
+.intro-screen img {
+  width: 280px;
+
+  /* ✅ smooth zoom animation */
+  animation: logoZoom 2s ease;
+}
+
+/* ================= LOGO ANIMATION ================= */
+
+@keyframes logoZoom {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ================= FADE OUT ================= */
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ================= OPTIONAL CLASS ================= */
+
+.hide {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}

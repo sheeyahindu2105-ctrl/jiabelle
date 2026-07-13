@@ -39,7 +39,7 @@ export default function Checkout() {
 
     if (!img) return "/no-image.png";
     if (img.startsWith("http")) return img;
-    return `http://localhost:5001${img}`;
+    return `http://localhost:5000${img}`;
   };
 
   const subtotal = items.reduce(
@@ -61,7 +61,6 @@ export default function Checkout() {
   /* ================= ORDER ================= */
 
   const placeOrder = async () => {
-
     try {
 
       const token = localStorage.getItem("token");
@@ -77,7 +76,8 @@ export default function Checkout() {
         totalAmount: total
       };
 
-      await axios.post("/api/orders", payload, {
+      // ✅ FIXED HERE
+      await axios.post("/orders", payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -87,12 +87,9 @@ export default function Checkout() {
       navigate("/order-success");
 
     } catch (err) {
-
       console.log(err);
       alert("Order failed");
-
     }
-
   };
 
   /* ================= RAZORPAY ================= */
@@ -101,7 +98,8 @@ export default function Checkout() {
 
     try {
 
-      const { data } = await axios.post("/api/payment/create-order", {
+      // ✅ FIXED HERE
+      const { data } = await axios.post("/payment/create-order", {
         amount: total
       });
 
@@ -116,7 +114,8 @@ export default function Checkout() {
 
         handler: async function (response) {
 
-          await axios.post("/api/payment/verify-payment", {
+          // ✅ FIXED HERE
+          await axios.post("/payment/verify-payment", {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature
@@ -141,10 +140,8 @@ export default function Checkout() {
       rzp.open();
 
     } catch (err) {
-
       console.log(err);
       alert("Payment failed");
-
     }
 
   };
@@ -252,13 +249,11 @@ export default function Checkout() {
                 <button
                   className="next-btn"
                   onClick={() => {
-
                     if (payment === "COD") {
                       placeOrder();
                     } else {
                       razorpayPayment();
                     }
-
                   }}
                 >
                   Pay ₹{total}

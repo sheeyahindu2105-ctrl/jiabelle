@@ -5,19 +5,31 @@ import {
   markAsRead,
   createNotification,
   markAllAsRead,
-deleteNotification,
-
+  deleteNotification,
 } from "../controllers/notificationController.js";
+
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", protect, getNotifications);
-router.get("/count", protect, getUnreadCount);
-router.post("/", protect, createNotification);
-router.put("/:id/read", protect, markAsRead); // fixed route
-router.put("/read-all", protect, markAllAsRead);
-router.delete("/:id", protect, deleteNotification);
+/* ================= NOTIFICATION ROUTES ================= */
 
+// GET ALL NOTIFICATIONS
+router.get("/", protect, getNotifications);
+
+// GET UNREAD COUNT
+router.get("/count", protect, getUnreadCount);
+
+// CREATE NOTIFICATION
+router.post("/", protect, createNotification);
+
+// MARK SINGLE NOTIFICATION AS READ
+router.put("/:id/read", protect, markAsRead);
+
+// MARK ALL AS READ
+router.put("/read-all", protect, markAllAsRead);
+
+// DELETE NOTIFICATION
+router.delete("/:id", protect, deleteNotification);
 
 export default router;

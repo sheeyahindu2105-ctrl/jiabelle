@@ -1,439 +1,233 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import axios from "../utils/axios";
 import "../styles/category.css";
 import "../styles/home.css";
 
 import allBanner from "../assets/banners/all.jpg";
 import newBanner from "../assets/banners/new.jpg";
+
 import handbagBanner from "../assets/banners/handbag.jpg";
+import handbagBanner1 from "../assets/banners/handbag1.jpg";
+import handbagBanner2 from "../assets/banners/handbag2.jpg";
+
 import slingBanner from "../assets/banners/sling.jpg";
+import slingBanner1 from "../assets/banners/sling1.jpg";
+import slingBanner2 from "../assets/banners/sling2.jpg";
+
 import satchelBanner from "../assets/banners/satchel.jpg";
+import satchelBanner1 from "../assets/banners/satchel1.jpg";
+import satchelBanner2 from "../assets/banners/satchel2.jpg";
+
 import toteBanner from "../assets/banners/tote.jpg";
+import toteBanner1 from "../assets/banners/tote1.jpg";
+import toteBanner2 from "../assets/banners/tote2.jpg";
+
 import backpackBanner from "../assets/banners/backpack.jpg";
+import backpackBanner1 from "../assets/banners/backpack1.jpg";
+import backpackBanner2 from "../assets/banners/backpack2.jpg";
+
 import clutchBanner from "../assets/banners/clutch.jpg";
-
-function CategoryPage(){
-
-const { name } = useParams();
-const navigate = useNavigate();
-
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
-
-const [products,setProducts] = useState([]);
-const [wishlist,setWishlist] = useState([]);
-const [search,setSearch] = useState("");
-const [sort,setSort] = useState("newest");
-const [priceFilter,setPriceFilter] = useState("");
-
-/* FETCH PRODUCTS */
-
-useEffect(()=>{
-
-const fetchProducts = async () => {
-
-try{
-
-const res = await fetch(`${API}/api/products`);
-const data = await res.json();
-
-setProducts(Array.isArray(data) ? data : []);
-
-}catch(err){
-console.log(err);
-}
-
-};
-
-fetchProducts();
-
-},[API]);
-
-/* WISHLIST */
-
-useEffect(()=>{
-const saved = JSON.parse(localStorage.getItem("wishlist")) || [];
-setWishlist(saved);
-},[]);
-
-const toggleWishlist = (product,e)=>{
-
-e.stopPropagation();
-
-let updated;
-
-if(wishlist.find(w=>w._id===product._id)){
-updated = wishlist.filter(w=>w._id!==product._id);
-}else{
-updated = [...wishlist,product];
-}
-
-setWishlist(updated);
-localStorage.setItem("wishlist",JSON.stringify(updated));
-
-};
-
-/* BANNERS */
-
-const bannerMap = {
-all:allBanner,
-new:newBanner,
-handbag:handbagBanner,
-sling:slingBanner,
-satchel:satchelBanner,
-tote:toteBanner,
-backpack:backpackBanner,
-clutch:clutchBanner
-};
-
-/* FILTER */
-
-let filtered = products;
-
-if(name !== "all" && name !== "new"){
-filtered = filtered.filter(
-p => p.category?.toLowerCase() === name.toLowerCase()
-);
-}
-
-/* SEARCH */
-
-filtered = filtered.filter(p =>
-(p.name || "").toLowerCase().includes(search.toLowerCase())
-);
-
-/* PRICE FILTER */
-
-if(priceFilter==="low"){
-filtered = filtered.filter(p=>p.price < 2000);
-}
-
-if(priceFilter==="mid"){
-filtered = filtered.filter(p=>p.price >=2000 && p.price<=5000);
-}
-
-if(priceFilter==="high"){
-filtered = filtered.filter(p=>p.price >5000);
-}
-
-/* SORT */
-
-if(sort==="newest"){
-filtered=[...filtered].sort(
-(a,b)=>new Date(b.createdAt) - new Date(a.createdAt)
-);
-}
-
-if(sort==="lowprice"){
-filtered=[...filtered].sort((a,b)=>a.price-b.price);
-}
-
-if(sort==="highprice"){
-filtered=[...filtered].sort((a,b)=>b.price-a.price);
-}
-
-/* CATEGORY LIST FOR NEW PAGE */
-
-const categories = [
-"handbag",
-"sling",
-"satchel",
-"tote",
-"backpack",
-"clutch"
-];
-
-return(
-
-<div className="home">
-
-<header className="home-header">
-
-<div className="logo" onClick={()=>navigate("/home")}>
-JIA BELLE
-</div>
-
-<input
-className="search-bar"
-placeholder="Search handbags..."
-value={search}
-onChange={(e)=>setSearch(e.target.value)}
-/>
-
-<div className="header-actions">
-
-<button onClick={()=>navigate("/wishlist")}>❤️</button>
-<button onClick={()=>navigate("/cart")}>🛒</button>
-<button onClick={()=>navigate("/profile")}>👤</button>
-
-</div>
-
-</header>
-
-{/* BANNER */}
-
-<div className="category-banner">
-<img src={bannerMap[name] || bannerMap["all"]} alt={name}/>
-</div>
-
-<div className="category-layout">
-
-{/* FILTER */}
-
-<div className="filters">
-
-<h3>Filters</h3>
-
-<h4>Price</h4>
-
-<label>
-<input type="radio" name="price"
-onChange={()=>setPriceFilter("low")}/>
-Under ₹2000
-</label>
-
-<label>
-<input type="radio" name="price"
-onChange={()=>setPriceFilter("mid")}/>
-₹2000 - ₹5000
-</label>
-
-<label>
-<input type="radio" name="price"
-onChange={()=>setPriceFilter("high")}/>
-Above ₹5000
-</label>
-
-<button onClick={()=>setPriceFilter("")}>
-Clear Filters
-</button>
-
-</div>
-
-{/* PRODUCTS */}
-
-<div className="products-section">
-
-<div className="sort-bar">
-
-<span>{filtered.length} Products</span>
-
-<select onChange={(e)=>setSort(e.target.value)}>
-
-<option value="newest">Newest</option>
-<option value="lowprice">Price Low → High</option>
-<option value="highprice">Price High → Low</option>
-
-</select>
-
-</div>
-
-{/* ===== NEW CATEGORY PAGE LOGIC ===== */}
-
-{name === "new" ? (
-
-categories.map((cat)=>{
-
-const latestProducts = products
-.filter(p => p.category?.toLowerCase() === cat)
-.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt))
-.slice(0,12);
-
-if(latestProducts.length===0) return null;
-
-return(
-
-<div key={cat} style={{marginBottom:"40px"}}>
-
-<div style={{
-display:"flex",
-justifyContent:"space-between",
-alignItems:"center",
-marginBottom:"15px"
-}}>
-
-<h3 style={{textTransform:"capitalize"}}>
-Latest {cat} Bags
-</h3>
-
-<button
-onClick={()=>navigate(`/category/${cat}`)}
-style={{
-background:"#c1121f",
-color:"#fff",
-border:"none",
-padding:"6px 14px",
-borderRadius:"6px",
-cursor:"pointer"
-}}
->
-View All →
-</button>
-
-</div>
-
-<div className="product-grid">
-
-{latestProducts.map((p)=>{
-
-const productImage =
-p?.images?.length>0 ? p.images[0] : "";
-
-const imageUrl =
-productImage.startsWith("http")
-? productImage
-: `${API}${productImage}`;
-
-return(
-
-<div
-className="product-card"
-key={p._id}
-onClick={()=>navigate(`/product/${p._id}`,{state:p})}
->
-
-{p.discount > 0 && (
-<div className="discount-badge">
-{p.discount}% OFF
-</div>
-)}
-
-<button
-className="wishlist-btn"
-onClick={(e)=>toggleWishlist(p,e)}
->
-{wishlist.some(w=>w._id===p._id) ? "❤️":"🤍"}
-</button>
-
-<img src={imageUrl} alt={p.name}/>
-
-<h4>{p.name}</h4>
-
-<div style={{fontSize:"14px",marginBottom:"6px",color:"#f5a623"}}>
-{"★".repeat(Math.round(p.ratings||0))}
-{"☆".repeat(5-Math.round(p.ratings||0))}
-<span style={{color:"#555",marginLeft:"6px"}}>
-{p.ratings||0} ({p.numReviews||0} reviews)
-</span>
-</div>
-
-<div className="price-row">
-
-<span className="sell-price">
-₹{p.price}
-</span>
-
-{p.originalPrice > 0 && (
-<span className="original-price">
-₹{p.originalPrice}
-</span>
-)}
-
-{p.discount > 0 && (
-<span className="discount-text">
-{p.discount}% OFF
-</span>
-)}
-
-</div>
-</div>
-
-);
-
-})}
-
-</div>
-
-</div>
-
-);
-
-})
-
-) : (
-
-<div className="product-grid">
-
-{filtered.map((p)=>{
-
-const productImage =
-p?.images?.length>0 ? p.images[0] : "";
-
-const imageUrl =
-productImage.startsWith("http")
-? productImage
-: `${API}${productImage}`;
-
-return(
-
-<div
-className="product-card"
-key={p._id}
-onClick={()=>navigate(`/product/${p._id}`,{state:p})}
->
-
-{p.discount > 0 && (
-<div className="discount-badge">
-{p.discount}% OFF
-</div>
-)}
-
-<button
-className="wishlist-btn"
-onClick={(e)=>toggleWishlist(p,e)}
->
-{wishlist.some(w=>w._id===p._id) ? "❤️":"🤍"}
-</button>
-
-<img src={imageUrl} alt={p.name}/>
-
-<h4>{p.name}</h4>
-
-<div style={{fontSize:"14px",marginBottom:"6px",color:"#f5a623"}}>
-{"★".repeat(Math.round(p.ratings||0))}
-{"☆".repeat(5-Math.round(p.ratings||0))}
-<span style={{color:"#555",marginLeft:"6px"}}>
-{p.ratings||0} ({p.numReviews||0} reviews)
-</span>
-</div>
-
-<div className="price-row">
-
-<span className="sell-price">
-₹{p.price}
-</span>
-
-{p.originalPrice > 0 && (
-<span className="original-price">
-₹{p.originalPrice}
-</span>
-)}
-
-{p.discount > 0 && (
-<span className="discount-text">
-{p.discount}% OFF
-</span>
-)}
-
-</div>
-
-</div>
-
-);
-
-})}
-
-</div>
-
-)}
-
-</div>
-
-</div>
-
-</div>
-
-);
-
+import clutchBanner1 from "../assets/banners/clutch1.jpg";
+import clutchBanner2 from "../assets/banners/clutch2.jpg";
+
+function CategoryPage() {
+  const { category } = useParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const safeCategory = category?.toLowerCase() || "all";
+  const categoryTitle = safeCategory.toUpperCase();
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const search = useMemo(
+    () => searchParams.get("search") || "",
+    [searchParams]
+  );
+
+  const [sort, setSort] = useState("newest");
+  const [priceFilter, setPriceFilter] = useState("");
+
+  /* ================= ✅ FIXED FETCH ================= */
+  useEffect(() => {
+    axios
+      .get("/products") // 🔥 FIX HERE (removed /api)
+      .then((res) =>
+        setProducts(Array.isArray(res.data) ? res.data : [])
+      )
+      .catch(() => setProducts([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  /* ================= BANNERS ================= */
+  const bannerGroups = useMemo(
+    () => ({
+      handbag: [handbagBanner, handbagBanner1, handbagBanner2],
+      sling: [slingBanner, slingBanner1, slingBanner2],
+      satchel: [satchelBanner, satchelBanner1, satchelBanner2],
+      tote: [toteBanner, toteBanner1, toteBanner2],
+      backpack: [backpackBanner, backpackBanner1, backpackBanner2],
+      clutch: [clutchBanner, clutchBanner1, clutchBanner2],
+    }),
+    []
+  );
+
+  const bannerMap = {
+    all: allBanner,
+    new: newBanner,
+  };
+
+  const [bannerIndex, setBannerIndex] = useState(0);
+
+  useEffect(() => {
+    const banners = bannerGroups[safeCategory];
+    if (!banners) return;
+
+    const interval = setInterval(() => {
+      setBannerIndex((prev) =>
+        prev === banners.length - 1 ? 0 : prev + 1
+      );
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [safeCategory, bannerGroups]);
+
+  const banner =
+    bannerGroups[safeCategory]?.[bannerIndex] ||
+    bannerMap[safeCategory] ||
+    bannerMap["all"];
+
+  /* ================= FILTER ================= */
+
+  const categoryMap = {
+    clutch: ["clutch"],
+    sling: ["sling"],
+    handbag: ["handbag"],
+    tote: ["tote"],
+    backpack: ["backpack"],
+    satchel: ["satchel"],
+  };
+
+  let filtered = [...products];
+
+  if (safeCategory !== "all" && safeCategory !== "new") {
+    filtered = filtered.filter((p) =>
+      categoryMap[safeCategory]?.some((cat) =>
+        (p.category || "").toLowerCase().includes(cat)
+      )
+    );
+  }
+
+  filtered = filtered.filter((p) =>
+    (p.name || "").toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (priceFilter === "low")
+    filtered = filtered.filter((p) => p.price < 2000);
+  if (priceFilter === "mid")
+    filtered = filtered.filter(
+      (p) => p.price >= 2000 && p.price <= 5000
+    );
+  if (priceFilter === "high")
+    filtered = filtered.filter((p) => p.price > 5000);
+
+  if (sort === "newest")
+    filtered.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+  if (sort === "lowprice")
+    filtered.sort((a, b) => a.price - b.price);
+  if (sort === "highprice")
+    filtered.sort((a, b) => b.price - a.price);
+
+  /* ================= UI ================= */
+
+  return (
+    <div className="home">
+
+      <div className="category-banner">
+        <img src={banner} alt={safeCategory} className="banner-img" />
+      </div>
+
+      <h2 className="section-title">{categoryTitle}</h2>
+
+      <div className="category-container">
+
+        <div className="filter-sidebar">
+          <h3>Refine By</h3>
+
+          <p><strong>Price</strong></p>
+
+          <label>
+            <input type="radio" onChange={() => setPriceFilter("low")} />
+            Under ₹2000
+          </label>
+
+          <label>
+            <input type="radio" onChange={() => setPriceFilter("mid")} />
+            ₹2000 - ₹5000
+          </label>
+
+          <label>
+            <input type="radio" onChange={() => setPriceFilter("high")} />
+            Above ₹5000
+          </label>
+
+          <button onClick={() => setPriceFilter("")}>
+            Clear Filters
+          </button>
+        </div>
+
+        <div className="products-section">
+
+          <div className="top-bar">
+            <p>{filtered.length} Products</p>
+
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
+              <option value="newest">Newest</option>
+              <option value="lowprice">Low to High</option>
+              <option value="highprice">High to Low</option>
+            </select>
+          </div>
+
+          <div className="product-grid">
+            {loading ? (
+              <p>Loading...</p>
+            ) : filtered.length === 0 ? (
+              <p>No products found</p>
+            ) : (
+              filtered.map((p) => {
+                const img = p?.images?.[0] || "";
+                const imageUrl = img.startsWith("http")
+                  ? img
+                  : `http://localhost:5000${img}`;
+
+                return (
+                  <div
+                    key={p._id}
+                    className="product-card"
+                    onClick={() =>
+                      navigate(`/product/${p._id}`, { state: p })
+                    }
+                  >
+                    <img src={imageUrl} alt={p.name} />
+                    <h4>{p.name}</h4>
+                    <p>₹{p.price}</p>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default CategoryPage;

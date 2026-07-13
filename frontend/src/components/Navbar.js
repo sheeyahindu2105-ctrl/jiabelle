@@ -10,19 +10,18 @@ function Navbar({ search = "", setSearch, products = [] }) {
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const [showLogin, setShowLogin] = useState(false);
-  const [showMore, setShowMore] = useState(false);
   const [notifCount, setNotifCount] = useState(0);
-  const [showPopup, setShowPopup] = useState("");
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
 
   const loginRef = useRef(null);
-  const moreRef = useRef(null);
   const socketRef = useRef(null);
 
-  /* ⭐ SEARCH STATES */
   const [suggestions, setSuggestions] = useState([]);
 
-  const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API = "http://localhost:5000";
 
+  /* ================= LOGIN CHECK ================= */
   const requireLogin = (path) => {
     if (!token) {
       navigate("/login", { state: { redirectTo: path } });
@@ -32,48 +31,25 @@ function Navbar({ search = "", setSearch, products = [] }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/home", { replace: true });
+    localStorage.clear();
+    navigate("/home");
     window.location.reload();
   };
 
-  /* ================= FETCH NOTIFICATION COUNT ================= */
-
+  /* ================= NOTIFICATIONS ================= */
   useEffect(() => {
+    if (!token) return;
 
-    const fetchCount = async () => {
+    fetch(`${API}/api/notifications/count`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setNotifCount(data.count || 0))
+      .catch(() => {});
+  }, [token]);
 
-      if (!token) return;
-
-      try {
-
-        const res = await fetch(`${API}/api/notifications/count`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        setNotifCount(data.count || 0);
-
-      } catch (err) {
-
-        console.error("Notification count error", err);
-
-      }
-
-    };
-
-    fetchCount();
-
-  }, [token, API]);
-
-  /* ================= SOCKET CONNECTION ================= */
-
+  /* ================= SOCKET ================= */
   useEffect(() => {
-
     if (!user?._id) return;
 
     socketRef.current = io("http://localhost:5000");
@@ -84,81 +60,62 @@ function Navbar({ search = "", setSearch, products = [] }) {
       setNotifCount((prev) => prev + 1);
     });
 
-    return () => {
-      socketRef.current.disconnect();
-    };
-
+    return () => socketRef.current.disconnect();
   }, [user]);
 
-  /* ================= CLOSE DROPDOWN WHEN CLICK OUTSIDE ================= */
-
+  /* ================= WISHLIST COUNT ================= */
   useEffect(() => {
+    const userId = user?._id || user?.id;
+    const key = userId ? `wishlist_${userId}` : "wishlist_guest";
 
-    const handleClickOutside = (event) => {
+    const saved = JSON.parse(localStorage.getItem(key)) || [];
+    setWishlistCount(saved.length);
+  }, [user]);
 
-      if (loginRef.current && !loginRef.current.contains(event.target)) {
+  /* ================= CART COUNT ================= */
+  useEffect(() => {
+    const userId = user?._id || user?.id;
+    const key = userId ? `cart_${userId}` : "cart_guest";
+
+    const saved = JSON.parse(localStorage.getItem(key)) || [];
+    setCartCount(saved.length);
+  }, [user]);
+
+  /* ================= SEARCH ================= */
+  const handleSearch = (value) => {
+    setSearch(value);
+
+    if (value.length > 0) {
+      const filtered = products.filter((p) =>
+        p.name?.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filtered.slice(0, 5));
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  /* ================= CLICK OUTSIDE ================= */
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (loginRef.current && !loginRef.current.contains(e.target)) {
         setShowLogin(false);
       }
-
-      if (moreRef.current && !moreRef.current.contains(event.target)) {
-        setShowMore(false);
-      }
-
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* ================= OPEN NOTIFICATIONS ================= */
-
-  const openNotifications = () => {
-
-    setNotifCount(0);
-
-    requireLogin("/notifications");
-
-  };
-
-  /* ⭐ SEARCH FUNCTION */
-
-const handleSearch = (value) => {
-
-  setSearch(value);
-
-  if (value.length > 0) {
-
-    const filtered = products.filter(p =>
-      p.name?.toLowerCase().includes(value.toLowerCase())
-    );
-
-    setSuggestions(filtered.slice(0,5));
-
-  } else {
-
-    setSuggestions([]);
-
-  }
-
-};
   return (
-
     <div className="navbar">
-
       {/* LOGO */}
-
       <div className="logo" onClick={() => navigate("/home")}>
         JIA BELLE
       </div>
 
-      {/* ⭐ SEARCH BAR WITH SUGGESTIONS */}
-
-      <div style={{ position: "relative" }}>
-
+      {/* SEARCH */}
+      <div className="search-container">
         <input
           className="search-bar"
           placeholder="Search handbags..."
@@ -167,213 +124,77 @@ const handleSearch = (value) => {
         />
 
         {suggestions.length > 0 && (
-
           <div className="search-suggestions">
-
-            {suggestions.map(item => (
+            {suggestions.map((item) => (
               <div
                 key={item._id}
                 className="suggestion-item"
-onClick={() => navigate(`/product/${item._id}`, { state: item })}              >
+                onClick={() =>
+                  navigate(`/product/${item._id}`, { state: item })
+                }
+              >
                 {item.name}
               </div>
             ))}
-
           </div>
-
         )}
-
       </div>
 
+      {/* RIGHT SIDE */}
       <div className="nav-right">
 
-        {/* NOTIFICATIONS */}
-
-        <div
-          className="nav-item"
-          style={{ position: "relative", cursor: "pointer" }}
-          onClick={openNotifications}
-        >
+        {/* 🔔 NOTIFICATION */}
+        <div className="nav-icon" onClick={() => requireLogin("/notifications")}>
           🔔
-
-          {notifCount > 0 && (
-            <span className="notif-badge">
-              {notifCount}
-            </span>
-          )}
-
+          {notifCount > 0 && <span className="badge">{notifCount}</span>}
         </div>
 
-        {/* LOGIN */}
+        {/* ❤️ WISHLIST */}
+        <div className="nav-icon" onClick={() => requireLogin("/wishlist")}>
+          ❤️
+          {wishlistCount > 0 && <span className="badge">{wishlistCount}</span>}
+        </div>
 
+        {/* 👤 USER */}
         <div
-          className="nav-item"
+          className="nav-user"
           ref={loginRef}
           onClick={() => setShowLogin(!showLogin)}
         >
-
           {token ? `Hello, ${user?.name}` : "Login"}
 
           {showLogin && (
-
             <div className="dropdown">
-
               {!token && (
-                <div className="signup">
-                  New customer?
-                  <span onClick={() => navigate("/signup")}>
-                    Sign Up
-                  </span>
-                </div>
+                <div onClick={() => navigate("/signup")}>Sign Up</div>
               )}
 
               {token && (
                 <>
-                  <div onClick={() => requireLogin("/profile")}>
-                    My Profile
-                  </div>
-
-                  <div onClick={() => requireLogin("/orders")}>
-                    Orders
-                  </div>
-
-                  {user?.role === "user" && (
-                    <div onClick={() => requireLogin("/wishlist")}>
-                      Wishlist
-                    </div>
-                  )}
+                  <div onClick={() => navigate("/profile")}>My Profile</div>
+                  <div onClick={() => navigate("/orders")}>Orders</div>
                 </>
               )}
 
-              {user?.role === "user" && (
-                <div onClick={() => requireLogin("/become-seller")}>
-                  Become a Seller
-                </div>
-              )}
-
-              {user?.role === "seller" && (
-                <div onClick={() => navigate("/seller-dashboard")}>
-                  Seller Dashboard
-                </div>
-              )}
-
-              {user?.role === "admin" && (
-                <div onClick={() => navigate("/admin/dashboard")}>
-                  Admin Dashboard
-                </div>
-              )}
-
               {token && (
-                <div
-                  style={{ color: "red", fontWeight: "bold" }}
-                  onClick={handleLogout}
-                >
+                <div className="logout" onClick={handleLogout}>
                   Logout
                 </div>
               )}
-
-            </div>
-
-          )}
-
-        </div>
-
-        {/* MORE */}
-
-        <div
-          className="nav-item"
-          ref={moreRef}
-          onClick={() => setShowMore(!showMore)}
-        >
-
-          More
-
-          {showMore && (
-            <div className="dropdown">
-
-              <div onClick={() => { setShowPopup("notifications"); setShowMore(false); }}>
-                🔔 Notification Settings
-              </div>
-
-              <div onClick={() => { setShowPopup("support"); setShowMore(false); }}>
-                📞 24x7 Customer Care
-              </div>
-
-              <div onClick={() => { setShowPopup("advertise"); setShowMore(false); }}>
-                📢 Advertise
-              </div>
-
             </div>
           )}
-
         </div>
 
-        {/* CART */}
-
+        {/* 🛒 CART (emoji only, clean UI) */}
         {user?.role !== "seller" && user?.role !== "admin" && (
-          <div
-            className="nav-item"
-            onClick={() => navigate("/cart")}
-          >
-            Cart
+          <div className="nav-icon" onClick={() => navigate("/cart")}>
+            🛒
+            {cartCount > 0 && <span className="badge">{cartCount}</span>}
           </div>
         )}
 
       </div>
-
-      {/* POPUPS */}
-
-      {showPopup === "notifications" && (
-        <div className="popup" onClick={() => setShowPopup("")}>
-          <div className="popup-box" onClick={(e) => e.stopPropagation()}>
-            <h3>Notification Settings</h3>
-            <p>Manage alerts and updates.</p>
-            <ul>
-              <li>Order Updates</li>
-              <li>Delivery Notifications</li>
-              <li>Promotional Offers</li>
-            </ul>
-            <button onClick={() => setShowPopup("")}>Close</button>
-          </div>
-        </div>
-      )}
-
-      {showPopup === "support" && (
-        <div className="popup">
-          <div className="popup-box">
-            <h3>24x7 Customer Care</h3>
-
-            <p>
-              <strong>Phone:</strong> +91 9876543210
-            </p>
-
-            <p>
-              <strong>Email:</strong> support@jiabelle.com
-            </p>
-
-            <button onClick={() => setShowPopup("")}>
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showPopup === "advertise" && (
-        <div className="popup" onClick={() => setShowPopup("")}>
-          <div className="popup-box" onClick={(e) => e.stopPropagation()}>
-            <h3>Advertise With Us</h3>
-            <p>Promote your products to thousands of customers.</p>
-            <button onClick={() => navigate("/become-seller")}>
-              Start Advertising
-            </button>
-            <br />
-            <button onClick={() => setShowPopup("")}>Close</button>
-          </div>
-        </div>
-      )}
-
     </div>
-
   );
 }
 
