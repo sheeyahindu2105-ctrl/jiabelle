@@ -2,7 +2,7 @@ import axios from "axios";
 
 /* ================= BASE URL ================= */
 // ✅ Keep this
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "https://jiabelle-backend.onrender.com/api";
 
 /* ================= INSTANCE ================= */
 const instance = axios.create({
