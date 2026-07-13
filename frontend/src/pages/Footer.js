@@ -4,11 +4,7 @@ import "../styles/footer.css";
 function Footer() {
   return (
     <footer className="footer">
-
-      {/* TOP SECTION */}
       <div className="footer-container">
-
-        {/* ABOUT */}
         <div className="footer-col">
           <h3>JIABELLE</h3>
           <p>
@@ -17,7 +13,6 @@ function Footer() {
           </p>
         </div>
 
-        {/* SHOP */}
         <div className="footer-col">
           <h4>Shop</h4>
           <ul>
@@ -28,7 +23,6 @@ function Footer() {
           </ul>
         </div>
 
-        {/* SUPPORT */}
         <div className="footer-col">
           <h4>Customer Support</h4>
           <ul>
@@ -39,27 +33,26 @@ function Footer() {
           </ul>
         </div>
 
-        {/* CONTACT */}
         <div className="footer-col">
           <h4>Contact</h4>
+
           <p>
             <a href="mailto:support@jiabelle.com">
               support@jiabelle.com
             </a>
           </p>
+
           <p>
             <a href="tel:+919876543210">
               +91 9876543210
             </a>
           </p>
+
           <p>Gujarat, India</p>
         </div>
-
       </div>
 
-      {/* MIDDLE SECTION */}
       <div className="footer-middle">
-
         <div className="trust">
           <span>🔒 Secure Payments</span>
           <span>🚚 Free Shipping</span>
@@ -68,18 +61,36 @@ function Footer() {
 
         <div className="social">
           <span>Follow us:</span>
-          <a href="#">Instagram</a>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-        </div>
 
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Instagram
+          </a>
+
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Facebook
+          </a>
+
+          <a
+            href="https://twitter.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Twitter
+          </a>
+        </div>
       </div>
 
-      {/* BOTTOM */}
       <div className="footer-bottom">
         © 2026 Jiabelle. All rights reserved.
       </div>
-
     </footer>
   );
 }
