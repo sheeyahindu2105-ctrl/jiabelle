@@ -16,7 +16,6 @@ import { startOrderStatusUpdater } from "./utils/updateOrderStatus.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
-/* SOCKET IMPORTS */
 import http from "http";
 import { Server } from "socket.io";
 
@@ -28,20 +27,33 @@ connectDB();
 
 const app = express();
 
-/* CREATE HTTP SERVER */
+/* ================= HTTP SERVER ================= */
+
 const server = http.createServer(app);
 
-/* ✅ ALLOWED ORIGINS */
+/* ================= ALLOWED ORIGINS ================= */
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
+  "https://jiabelle.vercel.app",
 ];
 
 /* ================= SOCKET.IO ================= */
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   },
 });
@@ -61,12 +73,16 @@ io.on("connection", (socket) => {
 
 export { io };
 
-/* ================= MIDDLEWARE ================= */
+/* ================= CORS ================= */
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
         callback(null, true);
       } else {
         console.error("Blocked by CORS:", origin);
@@ -77,16 +93,28 @@ app.use(
   })
 );
 
-/* GOOGLE AUTH FIX */
+/* ================= GOOGLE AUTH ================= */
+
 app.use((req, res, next) => {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
+  res.setHeader(
+    "Cross-Origin-Opener-Policy",
+    "same-origin-allow-popups"
+  );
+  res.setHeader(
+    "Cross-Origin-Embedder-Policy",
+    "unsafe-none"
+  );
   next();
 });
 
-/* BODY PARSER */
+/* ================= BODY PARSER ================= */
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/* ================= STATIC ================= */
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 /* ================= ROUTES ================= */
 
@@ -98,13 +126,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/payment", paymentRoutes);
 
-/* ❌ REMOVED ADS ROUTE (FIXED) */
-
-/* ================= STATIC ================= */
-
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-/* ================= TEST ================= */
+/* ================= TEST ROUTE ================= */
 
 app.get("/", (req, res) => {
   res.send("Backend running 🚀");
@@ -115,6 +137,6 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
   startOrderStatusUpdater();
 });
