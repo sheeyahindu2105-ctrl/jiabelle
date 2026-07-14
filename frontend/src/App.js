@@ -25,6 +25,7 @@ import Account from "./pages/Account";
 import SellerOrders from "./pages/SellerOrders";
 import SellerAnalytics from "./pages/SellerAnalytics";
 import SearchPage from "./pages/SearchPage";
+import AddProduct from "./pages/AddProduct";
 
 /* ================= ADMIN ================= */
 import AdminLayout from "./admin/AdminLayout";
@@ -149,6 +150,7 @@ function App() {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/account" element={<Account />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/seller/add-product" element={<AddProduct />} />
 
           {/* SELLER */}
           <Route

@@ -1,62 +1,37 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SellerSidebar from "../components/SellerSidebar";
 import "../styles/SellerProducts.css";
 import "../styles/AddProduct.css";
 
 function SellerProducts() {
 
-  const location = useLocation();
+ 
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
 
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [stockFilter, setStockFilter] = useState("all");
 
-  const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
   const productsPerPage = 5;
 
-  const token = localStorage.getItem("token");
+  
+  
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [originalPrice, setOriginalPrice] = useState("");
-  const [discount, setDiscount] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [category, setCategory] = useState("");
-  const [images, setImages] = useState([]);
-
-  /* ================= URL FILTER (🔥 IMPORTANT) ================= */
-
-  useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const filter = query.get("filter");
-
-    if (filter === "low") setStockFilter("low");
-    else if (filter === "out") setStockFilter("out");
-    else setStockFilter("all");
-
-  }, [location.search]);
+  
 
   /* ================= AUTO PRICE ================= */
 
-  useEffect(() => {
-    if (originalPrice && discount >= 0) {
-      const sell =
-        originalPrice - (originalPrice * discount) / 100;
-      setPrice(Math.round(sell));
-    }
-  }, [originalPrice, discount]);
+ 
 
   /* ================= FETCH PRODUCTS ================= */
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products/my-products", {
-      headers: { Authorization: `Bearer ${token}` }
+fetch(`${process.env.REACT_APP_API_URL}/api/products/my-products`, {      headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setProducts(Array.isArray(data) ? data : []))
@@ -65,26 +40,16 @@ function SellerProducts() {
 
   /* ================= EDIT ================= */
 
-  const handleEdit = (product) => {
-    setShowForm(true);
-    setEditingId(product._id);
-
-    setName(product.name);
-    setDescription(product.description);
-    setOriginalPrice(product.originalPrice);
-    setDiscount(product.discount);
-    setPrice(product.price);
-    setStock(product.stock);
-    setCategory(product.category);
-  };
+  
 
   /* ================= FILTER ================= */
 
   const filteredProducts = products
 
-    .filter(p =>
-      p.name.toLowerCase().includes(search.toLowerCase())
-    )
+    .filter(
+  (p) =>
+    p.name?.toLowerCase().includes(search.toLowerCase())
+)
 
     .filter(p => {
       if (categoryFilter !== "all" && p.category !== categoryFilter)
@@ -101,10 +66,7 @@ function SellerProducts() {
 
   /* ================= PAGINATION ================= */
 
-  const totalPages = Math.ceil(
-    filteredProducts.length / productsPerPage
-  );
-
+    
   const start = (page - 1) * productsPerPage;
 
   const paginatedProducts = filteredProducts.slice(
@@ -114,48 +76,26 @@ function SellerProducts() {
 
   /* ================= DELETE ================= */
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this product?")) return;
+const handleDelete = async (id) => {
+  if (!window.confirm("Delete this product?")) return;
 
-    await fetch(`http://localhost:5000/api/products/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
-    });
+  await fetch(`${process.env.REACT_APP_API_URL}/api/products/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-    setProducts(products.filter(p => p._id !== id));
-  };
+  setProducts((prev) =>
+    prev.filter((p) => p._id !== id)
+  );
+};
+
+/* ================= UI ================= */
 
   /* ================= SUBMIT ================= */
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    const formData = new FormData();
-
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("price", price);
-    formData.append("originalPrice", originalPrice);
-    formData.append("discount", discount);
-    formData.append("stock", stock);
-    formData.append("category", category);
-
-    images.forEach(img => formData.append("images", img));
-
-    const url = editingId
-      ? `http://localhost:5000/api/products/${editingId}`
-      : "http://localhost:5000/api/products";
-
-    const method = editingId ? "PUT" : "POST";
-
-    await fetch(url, {
-      method,
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData
-    });
-
-    window.location.reload();
-  };
 
   /* ================= UI ================= */
 
@@ -170,12 +110,13 @@ function SellerProducts() {
           <div className="products-header">
             <h2>My Products</h2>
 
-            <button
-              className="add-product-btn"
-              onClick={() => setShowForm(!showForm)}
-            >
-              {showForm ? "Close Form" : "+ Add Product"}
-            </button>
+            
+             <button
+  className="add-product-btn"
+  onClick={() => navigate("/seller/add-product")}
+>
+  + Add Product
+</button>
           </div>
 
           {/* FILTER BAR */}
@@ -235,7 +176,7 @@ function SellerProducts() {
                         src={
                           p.images[0].startsWith("http")
                             ? p.images[0]
-                            : `http://localhost:5000${p.images[0]}`
+                            : `${process.env.REACT_APP_API_URL}${p.images[0]}`
                         }
                         className="table-img"
                         alt=""
@@ -258,7 +199,7 @@ function SellerProducts() {
                   <td>{p.category}</td>
 
                   <td>
-                    <button onClick={() => handleEdit(p)}>Edit</button>
+                    <button disabled>Edit</button>
                     <button onClick={() => handleDelete(p._id)}>Delete</button>
                   </td>
                 </tr>
@@ -272,6 +213,7 @@ function SellerProducts() {
 
     </div>
   );
-}
+  }
+  
 
 export default SellerProducts;
