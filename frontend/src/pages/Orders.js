@@ -6,7 +6,9 @@ function Orders() {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
 
-  const API = "http://localhost:5000";
+  const API =
+  process.env.REACT_APP_API_URL ||
+  "https://jiabelle-backend.onrender.com";
   const token = localStorage.getItem("token");
 
   /* ================= FETCH ORDERS ================= */
@@ -34,7 +36,7 @@ function Orders() {
     };
 
     fetchOrders();
-  }, [token]);
+ }, [API, token]);
 
   /* ================= STATUS CLASS ================= */
 

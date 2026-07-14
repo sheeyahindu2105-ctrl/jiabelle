@@ -205,8 +205,7 @@ function CategoryPage() {
                 const img = p?.images?.[0] || "";
                 const imageUrl = img.startsWith("http")
                   ? img
-                  : `http://localhost:5000${img}`;
-
+: `${process.env.REACT_APP_API_URL}${img}`;
                 return (
                   <div
                     key={p._id}

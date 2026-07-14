@@ -9,7 +9,9 @@ const navigate = useNavigate();
 
 const [order,setOrder] = useState(null);
 
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API =
+  process.env.REACT_APP_API_URL ||
+  "https://jiabelle-backend.onrender.com";
 const token = localStorage.getItem("token");
 
 useEffect(()=>{
@@ -297,7 +299,14 @@ return(
 
 <div className="product-row" key={index}>
 
-<img src={image} alt="product"/>
+<img
+  src={
+    image.startsWith("http")
+      ? image
+      : `${API}${image}`
+  }
+  alt="product"
+/>
 
 <div className="product-info">
 

@@ -2,23 +2,29 @@ import { useEffect, useState, useCallback } from "react";
 import "../styles/SellerOrders.css";
 import SellerSidebar from "../components/SellerSidebar";
 
-function SellerOrders(){
+function SellerOrders() {
 
-const [orders,setOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
 
-const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-/* ===== FETCH ORDERS ===== */
+  const API =
+    process.env.REACT_APP_API_URL ||
+    "https://jiabelle-backend.onrender.com";
 
-const fetchOrders = useCallback(async () => {
+  /* ===== FETCH ORDERS ===== */
+
+  const fetchOrders = useCallback(async () => {
 
 try{
 
 const res = await fetch(
-"http://localhost:5000/api/orders/seller",
-{
-headers:{ Authorization:`Bearer ${token}` }
-}
+  `${API}/api/orders/seller`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
 );
 
 const data = await res.json();
@@ -31,7 +37,7 @@ console.log(err);
 
 }
 
-},[token]);
+}, [API, token]);
 
 
 /* LOAD ORDERS */

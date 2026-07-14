@@ -8,7 +8,7 @@ function ProductDetails() {
 
   const product = location.state;
 
-  const API = "http://localhost:5000";
+  const API = process.env.REACT_APP_API_URL || "https://jiabelle-backend.onrender.com";
 
   /* ================= USER ================= */
 

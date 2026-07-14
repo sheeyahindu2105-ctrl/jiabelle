@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import "../styles/profile.css";
 
 function Profile() {
-
   const navigate = useNavigate();
 
   let user = null;
 
   try {
     const storedUser = localStorage.getItem("user");
+
     if (storedUser && storedUser !== "undefined") {
       user = JSON.parse(storedUser);
     }
@@ -17,10 +17,16 @@ function Profile() {
     user = null;
   }
 
-  const API = "http://localhost:5000";
+  const API =
+    process.env.REACT_APP_API_URL ||
+    "https://jiabelle-backend.onrender.com";
+
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!user) navigate("/login");
+    if (!user) {
+      navigate("/login");
+    }
   }, [user, navigate]);
 
   const userId = user?._id || user?.id;
@@ -28,7 +34,7 @@ function Profile() {
   const [stats, setStats] = useState({
     orders: 0,
     wishlist: 0,
-    cart: 0
+    cart: 0,
   });
 
   const [showSection, setShowSection] = useState("menu");
@@ -40,82 +46,82 @@ function Profile() {
     newPassword: "",
     oldPassword: "",
     avatarFile: null,
-    removeAvatar: false
+    removeAvatar: false,
   });
 
-  /* LOAD STATS */
-  useEffect(() => {
+  /* ================= LOAD STATS ================= */
 
+  useEffect(() => {
     if (!userId) return;
 
-    const token = localStorage.getItem("token");
-
     const wishlistData = JSON.parse(
-      localStorage.getItem("wishlist_" + userId) || "[]"
+      localStorage.getItem(`wishlist_${userId}`) || "[]"
     );
 
     const cartData = JSON.parse(
-      localStorage.getItem("cart_" + userId) || "[]"
+      localStorage.getItem(`cart_${userId}`) || "[]"
     );
 
     fetch(`${API}/api/orders/my`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setStats({
           orders: Array.isArray(data) ? data.length : 0,
           wishlist: wishlistData.length,
-          cart: cartData.length
+          cart: cartData.length,
         });
       })
       .catch(() => {
         setStats({
           orders: 0,
           wishlist: wishlistData.length,
-          cart: cartData.length
+          cart: cartData.length,
         });
       });
-
-  }, [userId]);
+  }, [API, token, userId]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
+    /* ================= IMAGE UPLOAD ================= */
 
-  /* IMAGE UPLOAD */
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+
     if (!file) return;
 
     setForm((prev) => ({
       ...prev,
       avatar: URL.createObjectURL(file),
       avatarFile: file,
-      removeAvatar: false
+      removeAvatar: false,
     }));
   };
 
-  /* REMOVE IMAGE */
+  /* ================= REMOVE IMAGE ================= */
+
   const removeImage = () => {
     setForm((prev) => ({
       ...prev,
       avatar: "",
       avatarFile: null,
-      removeAvatar: true
+      removeAvatar: true,
     }));
   };
 
-  /* SAVE PROFILE */
+  /* ================= SAVE PROFILE ================= */
+
   const saveProfile = async () => {
-
     try {
-
-      const token = localStorage.getItem("token");
-
       const formData = new FormData();
+
       formData.append("name", form.name);
 
       if (form.avatarFile) {
@@ -129,9 +135,9 @@ function Profile() {
       const res = await fetch(`${API}/api/auth/profile`, {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: formData
+        body: formData,
       });
 
       const data = await res.json();
@@ -150,41 +156,37 @@ function Profile() {
         newPassword: "",
         oldPassword: "",
         avatarFile: null,
-        removeAvatar: false
+        removeAvatar: false,
       });
 
       alert("Profile updated successfully");
-      setShowSection("menu");
 
+      setShowSection("menu");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       alert("Profile update failed");
     }
-
   };
 
-  /* CHANGE PASSWORD */
-  const changePassword = async () => {
+  /* ================= CHANGE PASSWORD ================= */
 
+  const changePassword = async () => {
     if (!form.oldPassword || !form.newPassword) {
       alert("All password fields required");
       return;
     }
 
     try {
-
-      const token = localStorage.getItem("token");
-
       const res = await fetch(`${API}/api/auth/change-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           oldPassword: form.oldPassword,
-          newPassword: form.newPassword
-        })
+          newPassword: form.newPassword,
+        }),
       });
 
       const data = await res.json();
@@ -199,35 +201,41 @@ function Profile() {
       setForm((prev) => ({
         ...prev,
         oldPassword: "",
-        newPassword: ""
+        newPassword: "",
       }));
 
       setShowSection("menu");
-
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Password change failed");
     }
-
   };
+
+  /* ================= LOGOUT ================= */
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
     navigate("/login");
   };
 
   if (!user) return null;
 
-const avatarImage = form.removeAvatar ? "" : (form.avatar || user?.avatar);
-  return (
-
+  const avatarImage =
+    form.removeAvatar ? "" : form.avatar || user?.avatar;
+      return (
     <div className="account-container">
 
       {/* LEFT */}
       <div className="profile-card">
 
         {avatarImage ? (
-          <img src={avatarImage} alt="Profile" className="profile-photo" />
+          <img
+            src={avatarImage}
+            alt="Profile"
+            className="profile-photo"
+          />
         ) : (
           <div className="profile-avatar">
             {user?.name?.charAt(0)?.toUpperCase() || "U"}
@@ -237,37 +245,50 @@ const avatarImage = form.removeAvatar ? "" : (form.avatar || user?.avatar);
         <h3>{form.name}</h3>
         <p>{form.email}</p>
 
-        <button className="edit-btn" onClick={() => setShowSection("edit")}>
+        <button
+          className="edit-btn"
+          onClick={() => setShowSection("edit")}
+        >
           Edit Profile
         </button>
 
         <div className="profile-stats">
+
           <div>
             <h2>{stats.orders}</h2>
             <p>Orders</p>
           </div>
+
           <div>
             <h2>{stats.wishlist}</h2>
             <p>Wishlist</p>
           </div>
+
           <div>
             <h2>{stats.cart}</h2>
             <p>Cart</p>
           </div>
+
         </div>
 
       </div>
 
       {/* RIGHT */}
+
       <div className="account-box">
 
         <h2>My Account</h2>
 
-        {/* EDIT */}
+        {/* EDIT PROFILE */}
+
         {showSection === "edit" && (
+
           <div className="profile-section">
 
-            <button className="back-btn" onClick={() => setShowSection("menu")}>
+            <button
+              className="back-btn"
+              onClick={() => setShowSection("menu")}
+            >
               ← Back
             </button>
 
@@ -275,7 +296,10 @@ const avatarImage = form.removeAvatar ? "" : (form.avatar || user?.avatar);
 
             <div className="edit-profile-form">
 
-              <input type="file" onChange={handleImageUpload} />
+              <input
+                type="file"
+                onChange={handleImageUpload}
+              />
 
               <input
                 type="text"
@@ -292,8 +316,13 @@ const avatarImage = form.removeAvatar ? "" : (form.avatar || user?.avatar);
                 >
                   Remove Photo
                 </button>
-              )} 
-             <input type="email" value={form.email} disabled />
+              )}
+
+              <input
+                type="email"
+                value={form.email}
+                disabled
+              />
 
               <button onClick={saveProfile}>
                 Save Changes
@@ -302,13 +331,19 @@ const avatarImage = form.removeAvatar ? "" : (form.avatar || user?.avatar);
             </div>
 
           </div>
+
         )}
 
-        {/* PASSWORD */}
+        {/* CHANGE PASSWORD */}
+
         {showSection === "password" && (
+
           <div className="profile-section">
 
-            <button className="back-btn" onClick={() => setShowSection("menu")}>
+            <button
+              className="back-btn"
+              onClick={() => setShowSection("menu")}
+            >
               ← Back
             </button>
 
@@ -335,28 +370,45 @@ const avatarImage = form.removeAvatar ? "" : (form.avatar || user?.avatar);
             </button>
 
           </div>
-        )}
 
-        {/* MENU */}
+        )}
+                {/* MENU */}
+
         {showSection === "menu" && (
+
           <div className="account-menu">
-            <div onClick={() => navigate("/orders")}>👜 My Orders</div>
-            <div onClick={() => navigate("/wishlist")}>❤️ Wishlist</div>
-            <div onClick={() => navigate("/cart")}>🛒 Cart</div>
-            <div onClick={() => setShowSection("password")}>🔒 Change Password</div>
+
+            <div onClick={() => navigate("/orders")}>
+              👜 My Orders
+            </div>
+
+            <div onClick={() => navigate("/wishlist")}>
+              ❤️ Wishlist
+            </div>
+
+            <div onClick={() => navigate("/cart")}>
+              🛒 Cart
+            </div>
+
+            <div onClick={() => setShowSection("password")}>
+              🔒 Change Password
+            </div>
+
           </div>
+
         )}
 
-        <button className="logout" onClick={logout}>
+        <button
+          className="logout"
+          onClick={logout}
+        >
           Logout
         </button>
 
       </div>
 
     </div>
-
   );
-
 }
 
 export default Profile;

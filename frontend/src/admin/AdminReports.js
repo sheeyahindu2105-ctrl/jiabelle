@@ -18,7 +18,9 @@ import "../styles/AdminReports.css";
 
 function AdminReports(){
 
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API =
+  process.env.REACT_APP_API_URL ||
+  "https://jiabelle-backend.onrender.com";
 const token = localStorage.getItem("token");
 
 const [kpi,setKpi] = useState({});

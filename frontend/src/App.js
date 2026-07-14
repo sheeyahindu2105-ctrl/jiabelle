@@ -79,7 +79,7 @@ function App() {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
 
-  const API = "http://localhost:5000";
+  const API = process.env.REACT_APP_API_URL || "https://jiabelle-backend.onrender.com";
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -93,7 +93,7 @@ function App() {
     };
 
     fetchProducts();
-  }, []);
+ }, [API]);
 
   /* ================= NAVBAR HIDE ================= */
   const hideNavbarRoutes = [

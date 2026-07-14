@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 function SponsorPage() {
   const [products, setProducts] = useState([]);
 
-  const API = "http://localhost:5000";
-
+ const API =
+  process.env.REACT_APP_API_URL ||
+  "https://jiabelle-backend.onrender.com";
   useEffect(() => {
     const fetchProducts = async () => {
       const res = await fetch(`${API}/api/products/my`); // seller products

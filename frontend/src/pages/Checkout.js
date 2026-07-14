@@ -39,8 +39,7 @@ export default function Checkout() {
 
     if (!img) return "/no-image.png";
     if (img.startsWith("http")) return img;
-    return `http://localhost:5000${img}`;
-  };
+return `${process.env.REACT_APP_API_URL}${img}`;  };
 
   const subtotal = items.reduce(
     (a, i) => a + (Number(i.price) || 0) * (Number(i.quantity) || 1),

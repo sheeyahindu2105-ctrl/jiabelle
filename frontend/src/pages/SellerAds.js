@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 
 function SellerAds() {
 
-  const [ads, setAds] = useState([]);
-  const token = localStorage.getItem("token");
+ const [ads, setAds] = useState([]);
+const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/ads/my", {
+const API =
+  process.env.REACT_APP_API_URL ||
+  "https://jiabelle-backend.onrender.com";
+
+useEffect(() => {
+  
+   fetch(`${API}/api/ads/my`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())

@@ -7,22 +7,23 @@ function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [socket, setSocket] = useState(null);
 
-  const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
-  const token = localStorage.getItem("token");
+const API =
+  process.env.REACT_APP_API_URL ||
+  "https://jiabelle-backend.onrender.com";  const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
   /* ================= SOCKET CONNECTION ================= */
 
   useEffect(() => {
 
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io(API);
     setSocket(newSocket);
 
     return () => {
       newSocket.close();
     };
 
-  }, []);
+ }, [API]);
 
   /* ================= JOIN USER ROOM ================= */
 

@@ -9,28 +9,33 @@ function SearchPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  /* ✅ YOUR PORT */
-  const API = "http://localhost:5000";
+  const API =
+    process.env.REACT_APP_API_URL ||
+    "https://jiabelle-backend.onrender.com";
 
-  /* ================= IMAGE FIX ================= */
+  /* ================= IMAGE ================= */
+
   const getImage = (img) => {
     if (!img) return "/placeholder.png";
 
     return img.startsWith("http")
       ? img
-      : `${API}/${img}`;
+      : `${API}${img}`;
   };
 
   /* ================= FETCH PRODUCTS ================= */
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
+
         const res = await fetch(`${API}/api/products`);
         const data = await res.json();
 
         const list = Array.isArray(data) ? data : [];
 
-        const safeQuery = query?.toLowerCase().trim() || "";
+        const safeQuery = (query || "").toLowerCase().trim();
 
         const filtered = list.filter((p) =>
           p.name?.toLowerCase().includes(safeQuery)
@@ -38,7 +43,7 @@ function SearchPage() {
 
         setProducts(filtered);
       } catch (err) {
-        console.error(err);
+        console.error("Search error:", err);
         setProducts([]);
       } finally {
         setLoading(false);
@@ -46,7 +51,9 @@ function SearchPage() {
     };
 
     fetchProducts();
-  }, [query]);
+  }, [API, query]);
+
+  /* ================= UI ================= */
 
   return (
     <div className="home">
@@ -55,38 +62,38 @@ function SearchPage() {
         Search Results for "{query}"
       </h2>
 
-      {/* LOADING */}
-      {loading && (
+      {loading ? (
         <p style={{ textAlign: "center" }}>
           Loading...
         </p>
-      )}
-
-      {/* EMPTY */}
-      {!loading && products.length === 0 && (
+      ) : products.length === 0 ? (
         <p style={{ textAlign: "center" }}>
           No products found
         </p>
+      ) : (
+        <div className="product-grid">
+          {products.map((p) => (
+            <div
+              key={p._id}
+              className="product-card"
+              onClick={() =>
+                navigate(`/product/${p._id}`, { state: p })
+              }
+            >
+              <img
+                src={getImage(p.images?.[0])}
+                alt={p.name}
+              />
+
+              <h4>{p.name}</h4>
+
+              <p className="price">
+                ₹{p.price}
+              </p>
+            </div>
+          ))}
+        </div>
       )}
-
-      {/* PRODUCTS */}
-      <div className="product-grid">
-        {products.map((p) => (
-          <div
-            key={p._id}
-            className="product-card"
-            onClick={() => navigate(`/product/${p._id}`)}
-          >
-            <img
-              src={getImage(p.images?.[0])}
-              alt={p.name}
-            />
-
-            <h4>{p.name}</h4>
-            <p className="price">₹{p.price}</p>
-          </div>
-        ))}
-      </div>
 
     </div>
   );

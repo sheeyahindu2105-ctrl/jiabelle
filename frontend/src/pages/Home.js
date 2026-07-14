@@ -19,7 +19,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [imageIndexes, setImageIndexes] = useState({});
 
-  const API = "http://localhost:5000";
+  const API = process.env.REACT_APP_API_URL || "https://jiabelle-backend.onrender.com";
 
   /* ================= USER ================= */
   const user = JSON.parse(localStorage.getItem("user"));
@@ -41,7 +41,7 @@ function Home() {
     };
 
     fetchProducts();
-  }, []);
+  }, [API]);
 
   /* ================= LOAD WISHLIST ================= */
   useEffect(() => {

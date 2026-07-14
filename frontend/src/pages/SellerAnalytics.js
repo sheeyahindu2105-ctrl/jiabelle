@@ -23,14 +23,17 @@ Legend
 
 function SellerAnalytics(){
 
-const [orders,setOrders]=useState([]);
+const [orders, setOrders] = useState([]);
 
-const token=localStorage.getItem("token");
+const token = localStorage.getItem("token");
 
-useEffect(()=>{
+const API =
+  process.env.REACT_APP_API_URL ||
+  "https://jiabelle-backend.onrender.com";
 
+useEffect(() => {
 fetch(
-"http://localhost:5000/api/orders/seller",
+`${API}/api/orders/seller`,
 {
 headers:{Authorization:`Bearer ${token}`}
 }
@@ -38,7 +41,7 @@ headers:{Authorization:`Bearer ${token}`}
 .then(res=>res.json())
 .then(data=>setOrders(data || []));
 
-},[token]);
+}, [API, token]);
 
 /* CALCULATE MONTHLY REVENUE */
 

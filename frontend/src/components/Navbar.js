@@ -19,7 +19,9 @@ function Navbar({ search = "", setSearch, products = [] }) {
 
   const [suggestions, setSuggestions] = useState([]);
 
-  const API = "http://localhost:5000";
+  const API =
+  process.env.REACT_APP_API_URL ||
+  "https://jiabelle-backend.onrender.com";
 
   /* ================= LOGIN CHECK ================= */
   const requireLogin = (path) => {
@@ -46,13 +48,13 @@ function Navbar({ search = "", setSearch, products = [] }) {
       .then((res) => res.json())
       .then((data) => setNotifCount(data.count || 0))
       .catch(() => {});
-  }, [token]);
+ }, [API, token]);
 
   /* ================= SOCKET ================= */
   useEffect(() => {
     if (!user?._id) return;
 
-    socketRef.current = io("http://localhost:5000");
+    socketRef.current = io(API);
 
     socketRef.current.emit("join", user._id);
 
@@ -61,7 +63,7 @@ function Navbar({ search = "", setSearch, products = [] }) {
     });
 
     return () => socketRef.current.disconnect();
-  }, [user]);
+  }, [user, API]);
 
   /* ================= WISHLIST COUNT ================= */
   useEffect(() => {

@@ -27,13 +27,19 @@ ChartJS.register(
 );
 
 function SellerDashboard() {
+
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [sellerNotifCount, setSellerNotifCount] = useState(0);
 
   const socketRef = useRef(null);
   const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
+
+  const API =
+    process.env.REACT_APP_API_URL ||
+    "https://jiabelle-backend.onrender.com";
 
   /* ================= ROLE PROTECTION ================= */
 
@@ -42,7 +48,7 @@ function SellerDashboard() {
     if (!token || user?.role !== "seller") {
       window.location.href = "/login";
     }
-  }, [token]);
+}, [API, token]);
 
   /* ================= SOCKET ================= */
 
@@ -50,7 +56,7 @@ function SellerDashboard() {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user?._id) return;
 
-    socketRef.current = io("http://localhost:5000");
+   socketRef.current = io(API);
     socketRef.current.emit("join", user._id);
 
     socketRef.current.on("newNotification", () => {
@@ -58,14 +64,14 @@ function SellerDashboard() {
     });
 
     return () => socketRef.current.disconnect();
-  }, []);
+ }, [API]);
 
   /* ================= FETCH PRODUCTS ================= */
 
   const fetchMyProducts = useCallback(async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/products/my-products",
+  `${API}/api/products/my-products`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -75,14 +81,14 @@ function SellerDashboard() {
     } catch (err) {
       console.log(err);
     }
-  }, [token]);
+ }, [API, token]);
 
   /* ================= FETCH ORDERS ================= */
 
   const fetchOrders = useCallback(async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/orders/seller",
+  `${API}/api/orders/seller`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -92,7 +98,7 @@ function SellerDashboard() {
     } catch (err) {
       console.log(err);
     }
-  }, [token]);
+  }, [API, token]);
 
   useEffect(() => {
     if (token) {
