@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../styles/productDetails.css";
+import Navbar from "../components/Navbar";
 
 function ProductDetails() {
   const location = useLocation();
@@ -209,9 +210,14 @@ function ProductDetails() {
   };
 
   /* ================= UI ================= */
+return (
+  <div className="product-details">
 
-  return (
-    <div className="product-details">
+    <Navbar
+      search=""
+      setSearch={() => {}}
+      products={[]}
+    />
       <button className="back-btn" onClick={() => navigate(-1)}>
         ← Back
       </button>
