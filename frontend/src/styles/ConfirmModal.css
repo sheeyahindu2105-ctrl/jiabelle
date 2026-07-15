@@ -54,3 +54,59 @@
 .confirm-btn:hover {
   background: #dc2626;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.modal-overlay{
+    padding:15px;
+    box-sizing:border-box;
+}
+
+.modal-box{
+    width:100%;
+    max-width:360px;
+    padding:20px;
+    border-radius:12px;
+}
+
+.modal-box h3{
+    font-size:20px;
+}
+
+.modal-box p{
+    font-size:14px;
+    line-height:1.6;
+}
+
+.modal-actions{
+    flex-direction:column;
+    gap:12px;
+}
+
+.cancel-btn,
+.confirm-btn{
+    width:100%;
+    padding:12px;
+    font-size:15px;
+}
+
+}
+
+@media (max-width:480px){
+
+.modal-box{
+    width:95%;
+    padding:18px;
+}
+
+.modal-box h3{
+    font-size:18px;
+}
+
+.modal-box p{
+    font-size:13px;
+}
+
+}

@@ -54,3 +54,75 @@
 .success-btn:hover {
   transform: translateY(-2px);
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.success-page{
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.success-card{
+    width:100%;
+    max-width:420px;
+    padding:35px 25px;
+}
+
+.success-icon{
+    font-size:42px;
+}
+
+.success-card h1{
+    font-size:24px;
+}
+
+.success-card p{
+    font-size:15px;
+    line-height:1.6;
+}
+
+.success-actions{
+    flex-direction:column;
+    gap:12px;
+}
+
+.success-btn{
+    width:100%;
+    padding:14px;
+    font-size:15px;
+}
+
+}
+
+@media (max-width:480px){
+
+.success-page{
+    padding:15px;
+}
+
+.success-card{
+    width:100%;
+    padding:25px 18px;
+    border-radius:10px;
+}
+
+.success-icon{
+    font-size:36px;
+}
+
+.success-card h1{
+    font-size:20px;
+}
+
+.success-card p{
+    font-size:14px;
+}
+
+.success-btn{
+    font-size:14px;
+    padding:12px;
+}
+
+}

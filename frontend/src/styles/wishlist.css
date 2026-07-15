@@ -111,3 +111,103 @@
 .back-btn:hover {
   background: #222;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.wishlist-page{
+    padding:20px 15px;
+}
+
+.wishlist-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.wishlist-card{
+    padding:12px;
+}
+
+.wishlist-card img{
+    height:150px;
+}
+
+.wishlist-card h3{
+    font-size:15px;
+}
+
+.price{
+    font-size:16px;
+}
+
+.wishlist-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.wishlist-buttons button{
+    width:100%;
+    margin:0;
+    padding:10px;
+}
+
+.empty-wishlist h3{
+    font-size:20px;
+}
+
+.empty-wishlist p{
+    font-size:14px;
+}
+
+.empty-wishlist button,
+.back-btn{
+    width:100%;
+    max-width:300px;
+}
+
+}
+
+@media (max-width:480px){
+
+.wishlist-page{
+    padding:15px 10px;
+}
+
+.wishlist-grid{
+    grid-template-columns:1fr;
+    gap:15px;
+}
+
+.wishlist-card{
+    padding:10px;
+}
+
+.wishlist-card img{
+    height:220px;
+    object-fit:contain;
+}
+
+.wishlist-card h3{
+    font-size:16px;
+}
+
+.price{
+    font-size:15px;
+}
+
+.wishlist-buttons button{
+    font-size:14px;
+}
+
+.empty-wishlist h3{
+    font-size:18px;
+}
+
+.empty-wishlist p{
+    font-size:13px;
+}
+
+}

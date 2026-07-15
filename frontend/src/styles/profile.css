@@ -248,3 +248,143 @@ border-radius:8px;
 font-weight:600;
 cursor:pointer;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.account-container{
+    flex-direction:column;
+    gap:20px;
+    padding:20px 15px;
+}
+
+.profile-card{
+    width:100%;
+    text-align:center;
+    padding:20px;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.account-box{
+    width:100%;
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.profile-avatar,
+.profile-photo{
+    width:90px;
+    height:90px;
+}
+
+.profile-card h3{
+    font-size:22px;
+}
+
+.profile-stats{
+    justify-content:space-around;
+}
+
+.profile-stats h2{
+    font-size:18px;
+}
+
+.profile-section{
+    max-width:100%;
+}
+
+.profile-section input{
+    width:100%;
+    box-sizing:border-box;
+}
+
+.edit-profile-form{
+    max-width:100%;
+}
+
+.image-upload{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:15px;
+}
+
+.preview-avatar{
+    width:90px;
+    height:90px;
+}
+
+.primary-btn,
+.save-profile-btn,
+.logout{
+    width:100%;
+}
+
+.back-btn{
+    width:100%;
+    text-align:center;
+}
+
+.account-menu{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.account-item{
+    width:100%;
+    text-align:center;
+}
+
+}
+
+@media (max-width:480px){
+
+.account-container{
+    padding:15px 10px;
+}
+
+.profile-card{
+    padding:15px;
+}
+
+.account-box{
+    padding:15px;
+}
+
+.profile-avatar,
+.profile-photo{
+    width:80px;
+    height:80px;
+}
+
+.profile-card h3{
+    font-size:20px;
+}
+
+.profile-stats{
+    flex-direction:column;
+    gap:12px;
+}
+
+.profile-stats h2{
+    font-size:18px;
+}
+
+.preview-avatar{
+    width:80px;
+    height:80px;
+}
+
+.form-group label{
+    font-size:14px;
+}
+
+.profile-section input{
+    font-size:14px;
+}
+
+}

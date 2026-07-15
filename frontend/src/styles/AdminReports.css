@@ -106,3 +106,75 @@ flex:1;
 padding:30px;
 background:#f5f7fb;
 }
+
+
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.report-container{
+    padding:15px;
+    border-radius:12px;
+}
+
+.report-container h2{
+    font-size:22px;
+}
+
+.export-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.export-btn{
+    width:100%;
+    margin-right:0;
+}
+
+.report-cards{
+    grid-template-columns:1fr;
+    gap:15px;
+}
+
+.report-card{
+    padding:18px;
+}
+
+.report-card h3{
+    font-size:24px;
+}
+
+.chart-box,
+.table-box{
+    padding:15px;
+}
+
+.table-box{
+    overflow-x:auto;
+}
+
+.table-box table{
+    min-width:700px;
+}
+
+.table-box th,
+.table-box td{
+    font-size:13px;
+    padding:10px;
+}
+
+.admin-layout{
+    flex-direction:column;
+}
+
+.admin-content{
+    padding:15px;
+}
+
+.empty{
+    font-size:14px;
+}
+
+}

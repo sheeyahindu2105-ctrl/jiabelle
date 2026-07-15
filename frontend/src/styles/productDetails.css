@@ -379,3 +379,179 @@ display:none;
 .share-btn:hover {
   background: #ddd;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.product-details{
+    overflow-x:hidden;
+}
+
+.pd-header{
+    flex-direction:column;
+    gap:15px;
+    padding:15px;
+}
+
+.pd-logo{
+    font-size:22px;
+}
+
+.pd-search-box{
+    width:100%;
+}
+
+.pd-search-box input{
+    width:100%;
+    box-sizing:border-box;
+}
+
+.back-btn{
+    margin:15px;
+}
+
+.details-container{
+    flex-direction:column;
+    gap:25px;
+    width:95%;
+    padding:20px;
+}
+
+.image-section,
+.details-info{
+    width:100%;
+}
+
+.main-image-wrapper img{
+    height:280px;
+}
+
+.image-discount{
+    font-size:11px;
+    padding:4px 8px;
+}
+
+.arrow{
+    width:34px;
+    height:34px;
+    font-size:18px;
+}
+
+.wishlist-heart{
+    font-size:20px;
+}
+
+.thumb-row{
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.thumb{
+    width:60px;
+    height:60px;
+}
+
+.details-info h2{
+    font-size:24px;
+}
+
+.price-section{
+    flex-wrap:wrap;
+}
+
+.price{
+    font-size:24px;
+}
+
+.old-price{
+    font-size:16px;
+}
+
+.discount-badge{
+    font-size:12px;
+}
+
+.desc{
+    font-size:14px;
+}
+
+.details-buttons{
+    flex-direction:column;
+}
+
+.details-buttons button{
+    width:100%;
+    padding:14px;
+}
+
+.review-section textarea{
+    height:100px;
+}
+
+.review-section button{
+    width:100%;
+}
+
+.review-actions{
+    flex-direction:column;
+}
+
+.review-actions button{
+    width:100%;
+}
+
+.star-rating{
+    justify-content:center;
+}
+
+}
+
+@media (max-width:480px){
+
+.pd-header{
+    padding:12px;
+}
+
+.pd-logo{
+    font-size:20px;
+}
+
+.main-image-wrapper img{
+    height:220px;
+}
+
+.details-container{
+    width:100%;
+    padding:15px;
+    border-radius:0;
+}
+
+.details-info h2{
+    font-size:20px;
+}
+
+.price{
+    font-size:22px;
+}
+
+.old-price{
+    font-size:14px;
+}
+
+.thumb{
+    width:50px;
+    height:50px;
+}
+
+.arrow{
+    width:30px;
+    height:30px;
+    font-size:16px;
+}
+
+.wishlist-heart{
+    font-size:18px;
+}
+
+}

@@ -70,3 +70,28 @@
   pointer-events: none;
   transition: opacity 0.5s ease;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.intro-screen{
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.intro-screen img{
+    width:200px;
+    max-width:80%;
+}
+
+}
+
+@media (max-width:480px){
+
+.intro-screen img{
+    width:160px;
+    max-width:75%;
+}
+
+}

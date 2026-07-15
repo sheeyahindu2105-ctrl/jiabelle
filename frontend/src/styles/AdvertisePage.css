@@ -569,3 +569,131 @@ h3{
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.ad-container{
+    width:95%;
+    padding:15px;
+    margin:20px auto;
+}
+
+.title{
+    font-size:22px;
+    text-align:center;
+}
+
+.steps{
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.steps span{
+    width:32px;
+    height:32px;
+    font-size:13px;
+}
+
+.category-grid{
+    justify-content:center;
+}
+
+.category{
+    padding:8px 14px;
+    font-size:13px;
+}
+
+.product-list{
+    justify-content:center;
+}
+
+.product{
+    width:100%;
+}
+
+.plan-list{
+    grid-template-columns:1fr;
+}
+
+.plan-card{
+    padding:18px;
+}
+
+.confirm-box{
+    padding:15px;
+}
+
+.btn-row{
+    flex-direction:column;
+    gap:12px;
+}
+
+.btn,
+.btn.primary,
+.btn.success{
+    width:100%;
+}
+
+.ad-product-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.ad-product-card{
+    padding:10px;
+}
+
+.ad-product-img{
+    height:120px;
+}
+
+.ad-product-card h4{
+    font-size:13px;
+}
+
+.checkout-container{
+    grid-template-columns:1fr;
+    gap:20px;
+}
+
+.checkout-product{
+    flex-direction:column;
+    text-align:center;
+}
+
+.checkout-product img{
+    width:100px;
+    height:100px;
+}
+
+.checkout-right{
+    width:100%;
+}
+
+.price-box-final{
+    padding:15px;
+}
+
+.row{
+    font-size:14px;
+}
+
+.pay-btn{
+    width:100%;
+}
+
+.floating-continue{
+    right:15px;
+    left:15px;
+    bottom:15px;
+}
+
+.floating-continue .btn{
+    width:100%;
+    border-radius:12px;
+}
+
+}

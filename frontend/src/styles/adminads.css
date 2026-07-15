@@ -117,3 +117,62 @@
   text-align: center;
   margin-top: 50px;
 }
+
+
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.ads-page{
+    padding:15px;
+}
+
+.ads-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+}
+
+.ads-header h2{
+    font-size:22px;
+}
+
+.ads-count{
+    align-self:flex-start;
+}
+
+.ads-table-wrapper{
+    overflow-x:auto;
+}
+
+.ads-table{
+    min-width:900px;
+}
+
+.ads-table th,
+.ads-table td{
+    padding:12px;
+    font-size:13px;
+}
+
+.seller-name{
+    font-size:14px;
+}
+
+.seller-email{
+    font-size:12px;
+}
+
+.plan-badge,
+.status-badge{
+    font-size:11px;
+    padding:4px 8px;
+}
+
+.loading{
+    margin-top:30px;
+    font-size:15px;
+}
+
+}

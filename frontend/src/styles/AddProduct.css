@@ -112,3 +112,54 @@ font-weight:600;
 margin-bottom:15px;
 color:#059669;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.product-card{
+    width:95%;
+    margin:20px auto;
+    padding:20px;
+    border-radius:12px;
+}
+
+.product-card h3{
+    font-size:20px;
+    margin-bottom:20px;
+}
+
+.product-form{
+    gap:12px;
+}
+
+.product-form input,
+.product-form textarea,
+.product-form select{
+    width:100%;
+    font-size:14px;
+    padding:12px;
+    box-sizing:border-box;
+}
+
+.product-form textarea{
+    min-height:100px;
+}
+
+.product-form button{
+    width:100%;
+    padding:14px;
+    font-size:15px;
+}
+
+.preview-box{
+    justify-content:center;
+    gap:10px;
+}
+
+.preview-img{
+    width:80px;
+    height:80px;
+}
+
+}

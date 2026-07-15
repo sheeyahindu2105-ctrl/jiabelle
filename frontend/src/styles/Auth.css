@@ -45,3 +45,48 @@
   color: hotpink;
   text-decoration: underline;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.auth-container{
+    width:92%;
+    margin:30px auto;
+    padding:20px;
+    border-radius:12px;
+    box-sizing:border-box;
+}
+
+.auth-container h2{
+    font-size:26px;
+    margin-bottom:20px;
+}
+
+.auth-container input{
+    width:100%;
+    padding:14px;
+    font-size:15px;
+    box-sizing:border-box;
+}
+
+.auth-container button{
+    width:100%;
+    padding:14px;
+    font-size:16px;
+}
+
+.auth-link{
+    font-size:14px;
+}
+
+.google-login,
+.google-btn,
+.google-button{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:15px;
+}
+
+}

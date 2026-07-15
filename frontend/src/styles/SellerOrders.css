@@ -95,3 +95,77 @@ border-radius:6px;
 border:1px solid #ccc;
 font-size:13px;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.orders-card{
+    padding:18px;
+    border-radius:12px;
+}
+
+.product-table-card{
+    width:100%;
+    margin:20px auto;
+    padding:15px;
+    border-radius:12px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+.product-table{
+    min-width:900px;
+}
+
+.product-table th,
+.product-table td{
+    padding:10px;
+    font-size:13px;
+    white-space:nowrap;
+}
+
+.order-status-select{
+    min-width:120px;
+    font-size:13px;
+}
+
+.status{
+    font-size:11px;
+    padding:4px 8px;
+}
+
+}
+
+@media (max-width:480px){
+
+.orders-card{
+    padding:15px;
+}
+
+.product-table-card{
+    padding:10px;
+    margin:15px auto;
+}
+
+.product-table{
+    min-width:800px;
+}
+
+.product-table th,
+.product-table td{
+    font-size:12px;
+    padding:8px;
+}
+
+.order-status-select{
+    font-size:12px;
+    padding:6px;
+}
+
+.status{
+    font-size:10px;
+    padding:3px 6px;
+}
+
+}

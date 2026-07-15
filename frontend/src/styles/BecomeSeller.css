@@ -48,3 +48,47 @@
   font-size: 15px;
   color: #333;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.become-seller-container{
+    width:92%;
+    margin:25px auto;
+    padding:20px;
+    border-radius:12px;
+    box-sizing:border-box;
+}
+
+.become-seller-container h2{
+    font-size:24px;
+    margin-bottom:12px;
+}
+
+.become-seller-container p{
+    font-size:14px;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.become-seller-form input{
+    width:100%;
+    padding:14px;
+    font-size:15px;
+    box-sizing:border-box;
+}
+
+.become-seller-form button{
+    width:100%;
+    padding:14px;
+    font-size:16px;
+}
+
+.message{
+    font-size:14px;
+    margin-top:15px;
+    word-break:break-word;
+}
+
+}

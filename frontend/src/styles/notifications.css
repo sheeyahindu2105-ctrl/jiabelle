@@ -105,3 +105,88 @@ display:block;
 color:#6b7280;
 margin-top:20px;
 }
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.notifications-container{
+    width:95%;
+    padding:20px 15px;
+    box-sizing:border-box;
+}
+
+.notifications-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:15px;
+}
+
+.notifications-title{
+    font-size:24px;
+}
+
+.mark-read-btn{
+    width:100%;
+    padding:12px;
+    font-size:15px;
+}
+
+.notification-card{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+    padding:15px;
+}
+
+.notification-icon{
+    width:45px;
+    height:45px;
+    font-size:22px;
+}
+
+.notification-message{
+    font-size:14px;
+    line-height:1.5;
+}
+
+.notification-time{
+    font-size:12px;
+}
+
+}
+
+@media (max-width:480px){
+
+.notifications-container{
+    padding:15px 10px;
+}
+
+.notifications-title{
+    font-size:20px;
+}
+
+.notification-card{
+    padding:12px;
+}
+
+.notification-icon{
+    width:40px;
+    height:40px;
+    font-size:20px;
+}
+
+.notification-message{
+    font-size:13px;
+}
+
+.notification-time{
+    font-size:11px;
+}
+
+.mark-read-btn{
+    font-size:14px;
+    padding:10px;
+}
+
+}
