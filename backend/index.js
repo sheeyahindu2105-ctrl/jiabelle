@@ -19,16 +19,13 @@ import { fileURLToPath } from "url";
 import http from "http";
 import { Server } from "socket.io";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 dotenv.config();
 connectDB();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-
-/* ================= HTTP SERVER ================= */
-
 const server = http.createServer(app);
 
 /* ================= ALLOWED ORIGINS ================= */
@@ -39,23 +36,30 @@ const allowedOrigins = [
   "https://jiabelle.vercel.app",
 ];
 
+/* ================= CORS ================= */
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".vercel.app")
+    ) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 /* ================= SOCKET.IO ================= */
 
 const io = new Server(server, {
-  cors: {
-    origin: (origin, callback) => {
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        origin.endsWith(".vercel.app")
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
 io.on("connection", (socket) => {
@@ -63,7 +67,7 @@ io.on("connection", (socket) => {
 
   socket.on("join", (userId) => {
     socket.join(userId);
-    console.log(`User joined room: ${userId}`);
+    console.log("Joined:", userId);
   });
 
   socket.on("disconnect", () => {
@@ -72,26 +76,6 @@ io.on("connection", (socket) => {
 });
 
 export { io };
-
-/* ================= CORS ================= */
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        origin.endsWith(".vercel.app")
-      ) {
-        callback(null, true);
-      } else {
-        console.error("Blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
 
 /* ================= GOOGLE AUTH ================= */
 
@@ -107,7 +91,7 @@ app.use((req, res, next) => {
   next();
 });
 
-/* ================= BODY PARSER ================= */
+/* ================= BODY ================= */
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -126,7 +110,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/payment", paymentRoutes);
 
-/* ================= TEST ROUTE ================= */
+/* ================= TEST ================= */
 
 app.get("/", (req, res) => {
   res.send("Backend running 🚀");
